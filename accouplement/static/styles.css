@@ -1,0 +1,160 @@
+/* =========================================================
+   Accouplement — thème léger cohérent avec "troupeau/styles.css"
+   - Non intrusif : n’écrase pas Bootstrap (B5) et se limite
+     aux pages accouplement via classes dédiées.
+   - Tu peux le charger en plus de troupeau/styles.css.
+   ========================================================= */
+
+/* ---------- Variables utiles ---------- */
+:root{
+  --acc-card-bg: #fff;
+  --acc-card-border: #dee2e6;
+  --acc-muted: #6c757d;
+  --acc-heading: #343a40;
+  --acc-accent: #0d6efd;
+  --acc-danger: #dc3545;
+  --acc-success: #198754;
+  --acc-soft-shadow: 0 6px 18px rgba(0,0,0,.06);
+}
+
+/* ---------- Layout latéral (optionnel si déjà inline) ---------- */
+.acc-sidebar {
+  position: fixed;
+  top: 0; bottom: 0; left: 0;
+  z-index: 100;
+  padding: 48px 0 0;
+  box-shadow: inset -1px 0 0 rgba(0,0,0,.06);
+}
+.acc-main {
+  margin-left: 250px;
+  padding: 20px;
+}
+@media (max-width: 768px) {
+  .acc-sidebar { position: static; height: auto; padding-top: 0; }
+  .acc-main { margin-left: 0; }
+}
+
+/* ---------- Titres ---------- */
+.acc-title,
+h1.acc-title, h2.acc-title {
+  color: var(--acc-heading);
+  letter-spacing: .2px;
+}
+
+/* ---------- Cartes / panneaux ---------- */
+.acc-card {
+  background: var(--acc-card-bg);
+  border: 1px solid var(--acc-card-border);
+  border-radius: .5rem;
+  box-shadow: var(--acc-soft-shadow);
+}
+
+.acc-card-header {
+  background: #f8f9fa;
+  border-bottom: 1px solid var(--acc-card-border);
+  border-top-left-radius: .5rem;
+  border-top-right-radius: .5rem;
+  padding: .75rem 1rem;
+  font-weight: 600;
+  color: var(--acc-heading);
+}
+
+.acc-card-body {
+  padding: 1rem;
+}
+
+/* ---------- Formulaires ---------- */
+.acc-form .form-control,
+.acc-form .form-select,
+.acc-form textarea {
+  border-radius: .5rem;
+}
+
+.acc-form .form-control:focus,
+.acc-form .form-select:focus,
+.acc-form textarea:focus {
+  border-color: var(--acc-accent);
+  box-shadow: 0 0 0 .2rem rgba(13,110,253,.15);
+  outline: 0;
+}
+
+.acc-form .field-errors {
+  margin-top: .25rem;
+  color: var(--acc-danger);
+  font-size: .9rem;
+}
+
+.acc-form .form-help,
+.acc-muted {
+  color: var(--acc-muted) !important;
+}
+
+/* Groupes alignés, proche du style "kv" du troupeau */
+.acc-kv {
+  display: flex;
+  gap: .5rem;
+  margin-bottom: .35rem;
+  align-items: baseline;
+}
+.acc-kv .k {
+  min-width: 180px;
+  color: var(--acc-muted);
+  font-weight: 600;
+}
+.acc-kv .v {
+  flex: 1 1 auto;
+  min-width: 0;
+  word-wrap: break-word;
+}
+@media (max-width: 768px){
+  .acc-kv .k { min-width: 130px; }
+}
+
+/* ---------- Tableaux ---------- */
+.acc-table-wrap { overflow-x: auto; }
+.table.acc-table thead th { white-space: nowrap; }
+.table .text-truncate { max-width: 360px; }
+
+/* ---------- Badges & états ---------- */
+.badge-acc-yes { background: var(--acc-success); }
+.badge-acc-no  { background: #6c757d; }
+.badge-acc-pending { background: #0dcaf0; color: #0b3d48; }
+
+/* Pastilles “chip” pour petites infos */
+.acc-chip {
+  display: inline-block;
+  padding: .25rem .5rem;
+  border-radius: 999px;
+  background: #f1f3f5;
+  font-size: .875rem;
+}
+
+/* ---------- Boutons (légère animation) ---------- */
+.btn {
+  transition: transform .06s ease, box-shadow .12s ease;
+}
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0,0,0,.08);
+}
+
+/* ---------- Messages ---------- */
+.alert.acc-alert {
+  border-radius: .5rem;
+  box-shadow: var(--acc-soft-shadow);
+}
+
+/* ---------- Utilitaires ---------- */
+.acc-nowwrap { white-space: nowrap; }
+.acc-minw-150 { min-width: 150px; }
+
+/* ---------- Focus accessibilité ---------- */
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 .2rem rgba(13,110,253,.35);
+}
+
+/* ---------- Réduction d’animations ---------- */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}

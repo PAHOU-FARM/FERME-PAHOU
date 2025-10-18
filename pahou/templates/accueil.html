@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  {% load static %}
+  <meta charset="UTF-8" />
+  <title>Bienvenue – Ferme MV Pahou</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Bootstrap + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <!-- CSS global de la page d’accueil -->
+  <link href="{% static 'css/home.css' %}" rel="stylesheet" />
+  <style>
+    .hero .muted{ color:#6c757d; }
+    .quick-links{ display:grid; gap:.75rem; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); }
+    .ql-card{ display:flex; gap:.75rem; align-items:flex-start; padding:.75rem; border:1px solid #e9ecef; border-radius:.75rem; background:#fff; }
+    .ql-card i{ font-size:1.25rem; opacity:.9; }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <i class="fa-solid fa-seedling fa-lg"></i>
+      <h1>Ferme MV Pahou</h1>
+    </div>
+
+    <nav class="menu">
+      <p class="title">Menu</p>
+
+       <a class="nav-link active" href="{% url 'accueil' %}">
+        <i class="fa-solid fa-house"></i> Accueil
+      </a>
+
+      <!-- 🔗 Lien Dashboard ajouté ici -->
+      {% if user.is_authenticated %}
+        <a class="nav-link" href="{% url 'accounts:dashboard' %}">
+          <i class="fa-solid fa-gauge"></i> Dashboard
+        </a>
+      {% endif %}
+
+      <a class="nav-link" href="{% url 'troupeau:nouveau' %}">
+        <i class="fa-solid fa-paw"></i> Troupeau (formulaire)
+      </a>
+
+      <a class="nav-link" href="{% url 'historiquetroupeau:liste' %}">
+        <i class="fa-solid fa-clock-rotate-left"></i> Historique troupeau
+      </a>
+
+      <a class="nav-link" href="{% url 'alimentation:alimentation_create' %}">
+        <i class="fa-solid fa-bowl-food"></i> Alimentation (formulaire)
+      </a>
+
+      <a class="nav-link" href="{% url 'accouplement:nouveau' %}">
+        <i class="fa-solid fa-venus-mars"></i> Accouplement (formulaire)
+      </a>
+
+      <a class="nav-link" href="{% url 'gestation:gestation_create' %}">
+        <i class="fa-solid fa-baby-carriage"></i> Gestation (formulaire)
+      </a>
+
+      <a class="nav-link" href="{% url 'naissance:naissance_create' %}">
+        <i class="fa-solid fa-baby"></i> Naissance (formulaire)
+      </a>
+
+      <a class="nav-link" href="{% url 'croissance:croissance_create' %}">
+        <i class="fa-solid fa-chart-line"></i> Croissance (formulaire)
+      </a>
+
+      <a class="nav-link" href="{% url 'reproduction:reproduction_create' %}">
+        <i class="fa-solid fa-dna"></i> Reproduction (formulaire)
+      </a>
+
+      <a class="nav-link" href="{% url 'embouche:embouche_create' %}">
+        <i class="fa-solid fa-cow"></i> Embouche (formulaire)
+      </a>
+
+      <a class="nav-link" href="{% url 'vente:vente_create' %}">
+        <i class="fa-solid fa-cart-shopping"></i> Vente (formulaire)
+      </a>
+
+      <a class="nav-link" href="{% url 'maladie:maladie_create' %}">
+        <i class="fa-solid fa-notes-medical"></i> Maladie (formulaire)
+      </a>
+
+      <a class="nav-link" href="{% url 'vaccination:vaccination_create' %}">
+        <i class="fa-solid fa-syringe"></i> Vaccination (formulaire)
+      </a>
+
+      <a class="nav-link" href="{% url 'veterinaire:veterinaire_create' %}">
+        <i class="fa-solid fa-user-doctor"></i> Vétérinaire (formulaire)
+      </a>
+
+      <a class="nav-link" href="{% url 'troupeau:liste' %}">
+        <i class="fa-solid fa-sitemap"></i> Généalogie (depuis la fiche)
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Contenu principal -->
+  <main class="content">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="hero">
+        <h2 class="mb-1">Bienvenue à la <strong>Ferme MV Pahou</strong> 👋</h2>
+        <p class="muted mb-0">Utilisez le menu latéral pour accéder aux formulaires et listes.
+          Les blocs ci-dessous expliquent le rôle de chaque module.</p>
+      </div>
+    </div>
+
+    <!-- Guide des modules -->
+    <section class="mb-4">
+      <h3 class="h5 mb-3">Guide des modules</h3>
+      <div class="quick-links">
+        <!-- Troupeau -->
+        <div class="ql-card">
+          <i class="fa-solid fa-paw"></i>
+          <div>
+            <div class="fw-semibold">Troupeau</div>
+            <div class="muted small">Enregistrer chaque animal (identité, sexe, statut, parents) et maintenir la fiche à jour.</div>
+          </div>
+        </div>
+
+        <!-- Historique troupeau -->
+        <div class="ql-card">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          <div>
+            <div class="fw-semibold">Historique troupeau</div>
+            <div class="muted small">Traçabilité des modifications : qui a changé quoi et quand (lecture seule).</div>
+          </div>
+        </div>
+
+        <!-- Alimentation -->
+        <div class="ql-card">
+          <i class="fa-solid fa-bowl-food"></i>
+          <div>
+            <div class="fw-semibold">Alimentation</div>
+            <div class="muted small">Saisir rations, types d’aliments et fréquences pour suivre les périodes d’engraissement.</div>
+          </div>
+        </div>
+
+        <!-- Accouplement -->
+        <div class="ql-card">
+          <i class="fa-solid fa-venus-mars"></i>
+          <div>
+            <div class="fw-semibold">Accouplement</div>
+            <div class="muted small">Associer un mâle et une femelle et enregistrer la période de lutte.</div>
+          </div>
+        </div>
+
+        <!-- Gestation -->
+        <div class="ql-card">
+          <i class="fa-solid fa-baby-carriage"></i>
+          <div>
+            <div class="fw-semibold">Gestation</div>
+            <div class="muted small">Déclarer et suivre l’évolution des gestations jusqu’à la mise bas.</div>
+          </div>
+        </div>
+
+        <!-- Naissance -->
+        <div class="ql-card">
+          <i class="fa-solid fa-baby"></i>
+          <div>
+            <div class="fw-semibold">Naissance</div>
+            <div class="muted small">Déclarer les mises bas, créer les agneaux et lier automatiquement père et mère.</div>
+          </div>
+        </div>
+
+        <!-- Croissance -->
+        <div class="ql-card">
+          <i class="fa-solid fa-chart-line"></i>
+          <div>
+            <div class="fw-semibold">Croissance</div>
+            <div class="muted small">Saisir poids/mesures périodiques pour analyser les performances individuelles.</div>
+          </div>
+        </div>
+
+        <!-- Reproduction (cycle) -->
+        <div class="ql-card">
+          <i class="fa-solid fa-dna"></i>
+          <div>
+            <div class="fw-semibold">Reproduction</div>
+            <div class="muted small">Vue “cycle” reliant accouplement → gestation → naissance pour chaque femelle.</div>
+          </div>
+        </div>
+
+        <!-- Embouche -->
+        <div class="ql-card">
+          <i class="fa-solid fa-cow"></i>
+          <div>
+            <div class="fw-semibold">Embouche</div>
+            <div class="muted small">Suivre les lots destinés à l’engraissement et leurs performances (poids, durée).</div>
+          </div>
+        </div>
+
+        <!-- Vente -->
+        <div class="ql-card">
+          <i class="fa-solid fa-cart-shopping"></i>
+          <div>
+            <div class="fw-semibold">Vente</div>
+            <div class="muted small">Journal des ventes (poids, prix, acheteur, propriétaire) + indicateurs chiffrés.</div>
+          </div>
+        </div>
+
+        <!-- Maladie -->
+        <div class="ql-card">
+          <i class="fa-solid fa-notes-medical"></i>
+          <div>
+            <div class="fw-semibold">Maladie</div>
+            <div class="muted small">Déclarer symptômes, diagnostics, traitements et coûts associés par animal.</div>
+          </div>
+        </div>
+
+        <!-- Vaccination -->
+        <div class="ql-card">
+          <i class="fa-solid fa-syringe"></i>
+          <div>
+            <div class="fw-semibold">Vaccination</div>
+            <div class="muted small">Enregistrer vaccins, doses, rappels et couverture sanitaire du troupeau.</div>
+          </div>
+        </div>
+
+        <!-- Vétérinaire -->
+        <div class="ql-card">
+          <i class="fa-solid fa-user-doctor"></i>
+          <div>
+            <div class="fw-semibold">Vétérinaire</div>
+            <div class="muted small">Conserver les comptes-rendus de visite et recommandations de suivi.</div>
+          </div>
+        </div>
+
+        <!-- Généalogie -->
+        <div class="ql-card">
+          <i class="fa-solid fa-sitemap"></i>
+          <div>
+            <div class="fw-semibold">Généalogie</div>
+            <div class="muted small">Visualiser la filiation et la descendance depuis la fiche d’un animal.</div>
+          </div>
+        </div>
+
+        <!-- Exports -->
+        <div class="ql-card">
+          <i class="fa-solid fa-file-export"></i>
+          <div>
+            <div class="fw-semibold">Exports</div>
+            <div class="muted small">Exporter vos données (CSV, Excel, PDF) depuis les listes et tableaux.</div>
+          </div>
+        </div>
+
+        <!-- Comptes & sécurité (informative) -->
+        <div class="ql-card">
+          <i class="fa-solid fa-shield-halved"></i>
+          <div>
+            <div class="fw-semibold">Comptes & sécurité</div>
+            <div class="muted small">Connexion nominative, réinitialisation par e-mail (code admin), rôles Admin/Utilisateur.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Infos complémentaires -->
+    <div class="row g-3">
+      <div class="col-lg-4">
+        <div class="card p-3 h-100">
+          <div class="d-flex align-items-center gap-2">
+            <i class="fa-solid fa-shield-halved text-primary"></i>
+            <div>
+              <div class="fw-semibold">Rôles bien séparés</div>
+              <div class="text-muted small">Chaque vue a un rôle précis (liste, fiche, dashboard…). Les formulaires s’ouvrent via le menu.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card p-3 h-100">
+          <div class="d-flex align-items-center gap-2">
+            <i class="fa-solid fa-circle-info text-success"></i>
+            <div>
+              <div class="fw-semibold">Blocs d’information</div>
+              <div class="text-muted small">Ces blocs expliquent l’usage ; ils ne lancent pas d’action ni de formulaire.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card p-3 h-100">
+          <div class="d-flex align-items-center gap-2">
+            <i class="fa-solid fa-route text-warning"></i>
+            <div>
+              <div class="fw-semibold">Navigation latérale</div>
+              <div class="text-muted small">Utilise le menu à gauche pour accéder aux formulaires et aux listes.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

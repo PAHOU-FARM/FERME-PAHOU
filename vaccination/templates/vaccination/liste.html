@@ -1,0 +1,220 @@
+<!-- templates/vaccination/liste.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  {% load static %}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vaccinations — Liste</title>
+
+  <!-- CDNs -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+
+  <!-- Styles communs (layout .layout + sidebar) -->
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+  <link rel="stylesheet" href="{% static 'troupeau/styles.css' %}">
+  {# <link rel="stylesheet" href="{% static 'vaccination/styles.css' %}"> #}
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <i class="fa-solid fa-seedling fa-lg"></i>
+      <h1>Ferme MV Pahou</h1>
+    </div>
+    <nav class="menu">
+      {% with name=request.resolver_match.url_name %}
+        <p class="title">Navigation</p>
+
+        <a class="nav-link" href="{% url 'accueil' %}">
+          <i class="fa-solid fa-house"></i> Accueil
+        </a>
+
+        <a class="nav-link{% if name == 'vaccination_list' %} active{% endif %}" href="{% url 'vaccination:vaccination_list' %}">
+          <i class="fa-regular fa-rectangle-list"></i> Liste des vaccinations
+        </a>
+        <a class="nav-link{% if name == 'vaccination_create' %} active{% endif %}" href="{% url 'vaccination:vaccination_create' %}">
+          <i class="fa-solid fa-plus"></i> Nouvelle vaccination
+        </a>
+        <a class="nav-link{% if name == 'vaccination_dashboard' %} active{% endif %}" href="{% url 'vaccination:vaccination_dashboard' %}">
+          <i class="fa-solid fa-chart-pie"></i> Dashboard
+        </a>
+
+        <p class="title">Troupeau</p>
+        <a class="nav-link" href="{% url 'troupeau:liste' %}">
+          <i class="fa-solid fa-paw"></i> Liste des animaux
+        </a>
+      {% endwith %}
+    </nav>
+  </aside>
+
+  <!-- Contenu -->
+  <main class="content">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="h3 mb-0">Vaccinations</h1>
+      <div class="btn-toolbar gap-2">
+        <a class="btn btn-outline-secondary btn-sm" href="{% url 'accueil' %}">
+          <i class="fa-solid fa-house me-1"></i> Accueil
+        </a>
+        <a class="btn btn-outline-secondary btn-sm" href="{% url 'vaccination:vaccination_dashboard' %}">
+          <i class="fa-solid fa-chart-pie me-1"></i> Dashboard
+        </a>
+        <a class="btn btn-primary btn-sm" href="{% url 'vaccination:vaccination_create' %}">
+          <i class="fa-solid fa-plus me-1"></i> Nouvelle vaccination
+        </a>
+      </div>
+    </div>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} mb-3">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- Filtres -->
+    <div class="card mb-3">
+      <div class="card-header bg-light">
+        <strong>Filtres</strong>
+      </div>
+      <div class="card-body">
+        <form method="get" class="row g-3">
+          <div class="col-lg-5">
+            <label for="q" class="form-label">Recherche</label>
+            <input id="q" name="q" type="text" class="form-control" value="{{ filters.q|default:'' }}" placeholder="boucle, vaccin, véto…">
+          </div>
+
+          <div class="col-sm-6 col-lg-3">
+            <label for="voie-filter" class="form-label">Voie d’administration</label>
+            <select id="voie-filter" name="voie" class="form-select" data-selected="{{ filters.voie|default:'' }}">
+              <option value="">— Toutes —</option>
+              <option value="Voie sous-cutanée">Voie sous-cutanée</option>
+              <option value="Voie orale">Voie orale</option>
+              <option value="Voie intramusculaire">Voie intramusculaire</option>
+              <option value="Voie intranasale">Voie intranasale</option>
+            </select>
+          </div>
+
+          <div class="col-sm-6 col-lg-2">
+            <label for="from" class="form-label">Du</label>
+            <input id="from" name="from" type="date" class="form-control" value="{{ filters.from|default:'' }}">
+          </div>
+
+          <div class="col-sm-6 col-lg-2">
+            <label for="to" class="form-label">Au</label>
+            <input id="to" name="to" type="date" class="form-control" value="{{ filters.to|default:'' }}">
+          </div>
+
+          <div class="col-12 d-flex justify-content-end gap-2">
+            <a class="btn btn-outline-secondary" href="{% url 'vaccination:vaccination_list' %}">Réinitialiser</a>
+            <button class="btn btn-primary" type="submit">Filtrer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Liste -->
+    {% if vaccinations %}
+      <div class="card">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+          <strong>Liste des vaccinations</strong>
+          {% if is_paginated %}
+            <span class="badge bg-primary rounded-pill">{{ page_obj.paginator.count }}</span>
+          {% else %}
+            <span class="badge bg-primary rounded-pill">{{ vaccinations|length }}</span>
+          {% endif %}
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Boucle</th>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Nom</th>
+                  <th>Dose (mL)</th>
+                  <th>Voie</th>
+                  <th>Vétérinaire</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for v in vaccinations %}
+                <tr>
+                  <td><strong>{{ v.boucle_ovin.boucle_ovin }}</strong></td>
+                  <td>{{ v.date_vaccination|date:"d/m/Y" }}</td>
+                  <td>{{ v.type_vaccin }}</td>
+                  <td>{{ v.nom_vaccin }}</td>
+                  <td>{% if v.dose_vaccin is not None %}{{ v.dose_vaccin|floatformat:2 }}{% else %}—{% endif %}</td>
+                  <td>{{ v.voie_administration }}</td>
+                  <td>{{ v.nom_veterinaire|default:"—" }}</td>
+                  <td class="text-end">
+                    <div class="btn-group btn-group-sm">
+                      <a class="btn btn-outline-primary" href="{% url 'vaccination:vaccination_detail' v.pk %}">
+                        <i class="fa-solid fa-eye"></i>
+                      </a>
+                      <a class="btn btn-outline-secondary" href="{% url 'vaccination:vaccination_update' v.pk %}">
+                        <i class="fa-solid fa-pen"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          {% if is_paginated %}
+          <div class="card-footer">
+            <nav aria-label="Pagination">
+              <ul class="pagination justify-content-center mb-0">
+                {% if page_obj.has_previous %}
+                  <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ page_obj.previous_page_number }}&q={{ filters.q }}&voie={{ filters.voie }}&from={{ filters.from }}&to={{ filters.to }}">
+                      Précédent
+                    </a>
+                  </li>
+                {% endif %}
+                <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+                {% if page_obj.has_next %}
+                  <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ page_obj.next_page_number }}&q={{ filters.q }}&voie={{ filters.voie }}&from={{ filters.from }}&to={{ filters.to }}">
+                      Suivant
+                    </a>
+                  </li>
+                {% endif %}
+              </ul>
+            </nav>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    {% else %}
+      <div class="text-center py-5">
+        <div class="text-muted mb-2">Aucune vaccination</div>
+        <a class="btn btn-primary" href="{% url 'vaccination:vaccination_create' %}">
+          <i class="fa-solid fa-plus me-1"></i> Ajouter
+        </a>
+      </div>
+    {% endif %}
+  </main>
+</div>
+
+<!-- Sélection "voie" via JS (évite toute logique dans les <option>) -->
+<script>
+  (function () {
+    var sel = document.getElementById('voie-filter');
+    if (sel) {
+      var val = sel.getAttribute('data-selected');
+      if (val !== null) sel.value = val;
+    }
+  })();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

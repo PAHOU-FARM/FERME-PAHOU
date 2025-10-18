@@ -1,0 +1,243 @@
+<!-- templates/gestation/dashboard.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  {% load static %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestations — Tableau de bord</title>
+
+  <!-- CDNs -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+  <!-- Layout commun + styles module -->
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+  <link rel="stylesheet" href="{% static 'troupeau/styles.css' %}">
+  <link rel="stylesheet" href="{% static 'gestation/styles.css' %}">
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <i class="fa-solid fa-seedling fa-lg"></i>
+      <h1>Ferme MV Pahou</h1>
+    </div>
+
+    <nav class="menu">
+      {% with name=request.resolver_match.url_name %}
+        <p class="title">Navigation</p>
+
+        <a class="nav-link" href="{% url 'accueil' %}">
+          <i class="fa-solid fa-house"></i> Accueil
+        </a>
+
+        <!-- Gestation -->
+        <a class="nav-link{% if name == 'gestation_list' %} active{% endif %}"
+           href="{% url 'gestation:gestation_list' %}">
+          <i class="fa-solid fa-baby-carriage"></i> Gestations (liste)
+        </a>
+
+        <a class="nav-link{% if name == 'gestation_create' %} active{% endif %}"
+           href="{% url 'gestation:gestation_create' %}">
+          <i class="fa-solid fa-plus"></i> Nouvelle gestation
+        </a>
+
+        <a class="nav-link{% if name == 'gestation_dashboard' %} active{% endif %}"
+           href="{% url 'gestation:gestation_dashboard' %}">
+          <i class="fa-solid fa-chart-bar"></i> Dashboard
+        </a>
+
+        <p class="title">Autres</p>
+        <a class="nav-link" href="{% url 'troupeau:liste' %}">
+          <i class="fa-solid fa-paw"></i> Troupeau
+        </a>
+        <a class="nav-link" href="{% url 'accouplement:liste' %}">
+          <i class="fa-solid fa-heart"></i> Accouplements
+        </a>
+      {% endwith %}
+    </nav>
+  </aside>
+
+  <!-- Contenu -->
+  <main class="content">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="h3 mb-0">Tableau de bord — Gestations</h1>
+      <div class="btn-toolbar gap-2">
+        <a href="{% url 'accueil' %}" class="btn btn-outline-secondary btn-sm">
+          <i class="fa-solid fa-house me-1"></i> Accueil
+        </a>
+        <a href="{% url 'gestation:gestation_list' %}" class="btn btn-outline-secondary btn-sm">
+          ← Retour à la liste
+        </a>
+      </div>
+    </div>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    {% if total is not None %}
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+          <div class="card text-white bg-primary h-100">
+            <div class="card-body d-flex align-items-center justify-content-between">
+              <div>
+                <div class="small text-white-50">Total</div>
+                <div class="fs-3 fw-bold">{{ total }}</div>
+              </div>
+              <i class="fa-solid fa-layer-group fs-3 opacity-75"></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card text-white bg-success h-100">
+            <div class="card-body d-flex align-items-center justify-content-between">
+              <div>
+                <div class="small text-white-50">Confirmées</div>
+                <div class="fs-3 fw-bold">{{ confirmees|default:"0" }}</div>
+              </div>
+              <i class="fa-solid fa-check fs-3 opacity-75"></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card text-white bg-warning h-100">
+            <div class="card-body d-flex align-items-center justify-content-between">
+              <div>
+                <div class="small text-white-50">À surveiller</div>
+                <div class="fs-3 fw-bold text-dark">{{ a_surveiller|default:"0" }}</div>
+              </div>
+              <i class="fa-solid fa-triangle-exclamation fs-3 opacity-75"></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card text-white bg-secondary h-100">
+            <div class="card-body d-flex align-items-center justify-content-between">
+              <div>
+                <div class="small text-white-50">Non confirmées</div>
+                <div class="fs-3 fw-bold">{{ non_confirmees|default:"0" }}</div>
+              </div>
+              <i class="fa-solid fa-circle-minus fs-3 opacity-75"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    {% if par_etat %}
+      <div class="card mb-4">
+        <div class="card-header bg-light"><strong>Répartition par état</strong></div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-sm table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>État</th>
+                  <th class="text-end">Nombre</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in par_etat %}
+                  <tr>
+                    <td>{{ row.etat_gestation }}</td>
+                    <td class="text-end">{{ row.c }}</td>
+                  </tr>
+                {% empty %}
+                  <tr><td colspan="2" class="text-muted">Aucune donnée</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    {% if recentes %}
+      <div class="card mb-4">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+          <strong>Derniers enregistrements</strong>
+          <a href="{% url 'gestation:gestation_list' %}" class="btn btn-sm btn-outline-secondary">Tout voir</a>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-sm table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Brebis</th>
+                  <th>État</th>
+                  <th>Gestation</th>
+                  <th>Mise-bas estimée</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for g in recentes %}
+                <tr>
+                  <td><strong>{{ g.boucle_brebis.boucle_ovin }}</strong></td>
+                  <td>{{ g.etat_gestation }}</td>
+                  <td>{{ g.date_gestation|date:"d/m/Y" }}</td>
+                  <td>{{ g.date_estimee_mise_bas|date:"d/m/Y"|default:"—" }}</td>
+                  <td class="text-end">
+                    <a href="{% url 'gestation:gestation_detail' g.pk %}" class="btn btn-sm btn-outline-primary">Voir</a>
+                  </td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="5" class="text-muted">Aucun enregistrement récent</td></tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    {% if a_venir %}
+      <div class="card mb-4">
+        <div class="card-header bg-light"><strong>Prochaines mises-bas (estimées)</strong></div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-sm table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Date estimée</th>
+                  <th>Brebis</th>
+                  <th>État</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for g in a_venir %}
+                <tr>
+                  <td>{{ g.date_estimee_mise_bas|date:"d/m/Y" }}</td>
+                  <td>{{ g.boucle_brebis.boucle_ovin }}</td>
+                  <td>{{ g.etat_gestation }}</td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="3" class="text-muted">Aucune mise-bas à venir.</td></tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    {% if total is None and not par_etat and not recentes and not a_venir %}
+      <div class="alert alert-light border">
+        Aucune donnée transmise par la vue. Fournis
+        <code>total</code>, <code>par_etat</code>, <code>recentes</code> et <code>a_venir</code>.
+      </div>
+    {% endif %}
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

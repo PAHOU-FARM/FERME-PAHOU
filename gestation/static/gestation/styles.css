@@ -1,0 +1,88 @@
+/* ==============================
+   Gestation — Styles légers
+============================== */
+:root{
+  --card-bg:#ffffff;
+  --card-border:#dee2e6;
+  --muted:#6c757d;
+  --heading:#343a40;
+  --accent:#0d6efd;
+  --error:#dc3545;
+  --soft-shadow:0 6px 18px rgba(0,0,0,.06);
+}
+
+html,body{
+  scroll-behavior:smooth;
+  background:#f8f9fa;
+}
+
+/* Titres */
+h1,.h1,h2,.h2,h3,.h3{
+  color:var(--heading);
+  letter-spacing:.2px;
+}
+
+/* Boutons */
+.btn{
+  border-radius:.5rem;
+  transition:transform .06s ease, box-shadow .12s ease;
+}
+.btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 8px 20px rgba(0,0,0,.08);
+}
+
+/* Cartes */
+.card{
+  border-radius:.5rem;
+  border:1px solid var(--card-border);
+  background:var(--card-bg);
+  box-shadow:var(--soft-shadow);
+}
+
+/* Tableaux */
+.table{ margin-bottom:0; }
+.table thead th{
+  font-weight:600;
+  color:var(--heading);
+  border-top:none;
+  white-space:nowrap;
+}
+.table-hover tbody tr:hover{
+  background-color:rgba(13,110,253,.05);
+}
+
+/* Formulaires */
+.form-label{
+  font-weight:600;
+  color:var(--heading);
+}
+.form-control,.form-select{ border-radius:.5rem; }
+.form-control:focus,.form-select:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 .2rem rgba(13,110,253,.15);
+}
+
+/* Messages */
+.alert{
+  border-radius:.5rem;
+  box-shadow:var(--soft-shadow);
+}
+
+/* Paires clé/valeur (pages détail/confirm) */
+.kv{ display:flex; gap:.5rem; margin-bottom:.35rem; align-items:baseline; }
+.kv .k{ min-width:180px; color:var(--muted); font-weight:600; }
+.kv .v{ flex:1 1 auto; min-width:0; word-wrap:break-word; }
+
+/* Badges d’état */
+.badge-etat{ font-weight:500; letter-spacing:.1px; }
+/* Mapping facultatif si tu ajoutes data-etat="..." sur l’élément */
+.badge-etat[data-etat="Confirmée"]{ background:#198754 !important; color:#fff !important; }
+.badge-etat[data-etat="A surveiller"]{ background:#ffc107 !important; color:#212529 !important; }
+.badge-etat[data-etat="Non Confirmée"]{ background:#6c757d !important; color:#fff !important; }
+
+/* Responsive */
+@media (max-width:768px){
+  .kv .k{ min-width:140px; }
+  .form-actions{ flex-direction:column-reverse; gap:.5rem; }
+}

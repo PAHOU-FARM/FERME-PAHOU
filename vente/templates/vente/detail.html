@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  {% load static %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vente — #{{ vente.id }}</title>
+
+  <!-- CDNs -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+  <!-- Styles communs (layout .layout + sidebar) -->
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+  <link rel="stylesheet" href="{% static 'troupeau/styles.css' %}">
+  <!-- Optionnel : thème ventes -->
+  {# <link rel="stylesheet" href="{% static 'vente/styles.css' %}"> #}
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <i class="fa-solid fa-seedling fa-lg"></i>
+      <h1>Ferme MV Pahou</h1>
+    </div>
+
+    <nav class="menu">
+      {% with name=request.resolver_match.url_name %}
+        <p class="title">Navigation</p>
+
+        <a class="nav-link" href="{% url 'accueil' %}">
+          <i class="fa-solid fa-house"></i> Accueil
+        </a>
+
+        <a class="nav-link{% if name == 'vente_list' %} active{% endif %}" href="{% url 'vente:vente_list' %}">
+          <i class="fa-regular fa-rectangle-list"></i> Liste des ventes
+        </a>
+
+        <a class="nav-link{% if name == 'vente_create' %} active{% endif %}" href="{% url 'vente:vente_create' %}">
+          <i class="fa-solid fa-plus"></i> Nouvelle vente
+        </a>
+
+        <a class="nav-link{% if name == 'dashboard' %} active{% endif %}" href="{% url 'vente:dashboard' %}">
+          <i class="fa-solid fa-chart-pie"></i> Dashboard
+        </a>
+
+        <p class="title">Troupeau</p>
+        <a class="nav-link" href="{% url 'troupeau:liste' %}">
+          <i class="fa-solid fa-paw"></i> Liste des animaux
+        </a>
+      {% endwith %}
+    </nav>
+  </aside>
+
+  <!-- Contenu -->
+  <main class="content">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="h3 m-0">Vente — #{{ vente.id }}</h1>
+      <div class="btn-toolbar gap-2">
+        <a class="btn btn-outline-secondary btn-sm" href="{% url 'accueil' %}">
+          <i class="fa-solid fa-house me-1"></i> Accueil
+        </a>
+        <a class="btn btn-outline-secondary btn-sm" href="{% url 'vente:vente_list' %}">
+          ← Retour
+        </a>
+        <a class="btn btn-primary btn-sm" href="{% url 'vente:vente_update' vente.pk %}">
+          <i class="fa-solid fa-pen-to-square me-1"></i> Modifier
+        </a>
+        <a class="btn btn-danger btn-sm" href="{% url 'vente:vente_delete' vente.pk %}">
+          <i class="fa-solid fa-trash me-1"></i> Supprimer
+        </a>
+      </div>
+    </div>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} mb-3">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="card">
+      <div class="card-header bg-light fw-semibold">
+        <i class="fa-solid fa-receipt me-1"></i> Informations
+      </div>
+      <div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-sm-3">Boucle</dt>
+          <dd class="col-sm-9">{{ vente.boucle_ovin.boucle_ovin }}</dd>
+
+          <dt class="col-sm-3">Date</dt>
+          <dd class="col-sm-9">{{ vente.date_vente|date:"d/m/Y" }}</dd>
+
+          <dt class="col-sm-3">Poids</dt>
+          <dd class="col-sm-9">
+            {% if vente.poids_kg is not None %}{{ vente.poids_kg|floatformat:2 }} kg{% else %}<span class="text-muted">—</span>{% endif %}
+          </dd>
+
+          <dt class="col-sm-3">Prix</dt>
+          <dd class="col-sm-9">
+            {% if vente.prix_vente is not None %}{{ vente.prix_vente|floatformat:2 }} FCFA{% else %}<span class="text-muted">—</span>{% endif %}
+          </dd>
+
+          <dt class="col-sm-3">Acheteur</dt>
+          <dd class="col-sm-9">{{ vente.type_acheteur|default:"—" }}</dd>
+
+          <dt class="col-sm-3">Propriétaire</dt>
+          <dd class="col-sm-9">{{ vente.proprietaire_ovin|default:"—" }}</dd>
+
+          <dt class="col-sm-3">Observations</dt>
+          <dd class="col-sm-9">{{ vente.observations|linebreaksbr|default:"—" }}</dd>
+        </dl>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

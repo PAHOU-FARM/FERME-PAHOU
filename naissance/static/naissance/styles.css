@@ -1,0 +1,148 @@
+/* ==============================
+   Variables & base
+============================== */
+:root {
+  --card-bg: #ffffff;
+  --card-border: #dee2e6;
+  --muted: #6c757d;
+  --heading: #343a40;
+  --accent: #0d6efd;
+  --error: #dc3545;
+  --soft-shadow: 0 6px 18px rgba(0, 0, 0, .06);
+}
+
+html, body {
+  scroll-behavior: smooth;
+  background-color: #f8f9fa;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, .h1, h2, .h2, h3, .h3 {
+  color: var(--heading);
+  letter-spacing: .2px;
+}
+
+/* ==============================
+   Cartes
+============================== */
+.card {
+  border-radius: .5rem;
+  border: 1px solid var(--card-border);
+  background-color: var(--card-bg);
+  box-shadow: var(--soft-shadow);
+}
+
+.card-header {
+  font-weight: 600;
+}
+
+/* ==============================
+   Boutons
+============================== */
+.btn {
+  border-radius: .5rem;
+  transition: transform .06s ease, box-shadow .12s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0,0,0,.08);
+}
+
+/* ==============================
+   Formulaires
+============================== */
+.form-label {
+  font-weight: 600;
+  color: var(--heading);
+}
+
+.form-control,
+.form-select,
+textarea {
+  border-radius: .5rem;
+}
+
+.form-control:focus,
+.form-select:focus,
+textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 .2rem rgba(13,110,253,.15);
+  outline: 0;
+}
+
+.form-text {
+  color: var(--muted);
+}
+
+/* ==============================
+   Tableaux
+============================== */
+.table {
+  margin-bottom: 0;
+}
+
+.table thead th {
+  font-weight: 600;
+  color: var(--heading);
+  border-top: none;
+  white-space: nowrap;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(13,110,253,.05);
+}
+
+.text-truncate {
+  max-width: 260px;
+}
+
+/* ==============================
+   Badges utilitaires
+============================== */
+.badge-interne { background: #198754; }   /* Interne → vert */
+.badge-externe { background: #0d6efd; }   /* Externe → bleu */
+.badge-inconnu { background: #6c757d; }   /* Inconnu → gris */
+
+/* ==============================
+   Messages
+============================== */
+.alert {
+  border-radius: .5rem;
+  box-shadow: var(--soft-shadow);
+}
+
+/* ==============================
+   Blocs clé/valeur (si utilisés)
+============================== */
+.kv {
+  display: flex;
+  gap: .5rem;
+  margin-bottom: .35rem;
+  align-items: baseline;
+}
+.kv .k {
+  min-width: 180px;
+  color: var(--muted);
+  font-weight: 600;
+}
+.kv .v {
+  flex: 1 1 auto;
+  min-width: 0;
+  word-wrap: break-word;
+}
+
+/* ==============================
+   Divers
+============================== */
+.text-muted { color: var(--muted) !important; }
+hr { opacity: .12; }
+
+/* ==============================
+   Responsive
+============================== */
+@media (max-width: 768px) {
+  .text-truncate { max-width: 160px; }
+  .kv .k { min-width: 130px; }
+}

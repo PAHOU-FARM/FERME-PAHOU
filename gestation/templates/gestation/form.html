@@ -1,0 +1,149 @@
+<!-- templates/gestation/form.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  {% load static %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% if form.instance.pk %}Modifier{% else %}Nouvelle{% endif %} gestation</title>
+
+  <!-- CDNs -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+  <!-- Layout commun + styles module -->
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+  <link rel="stylesheet" href="{% static 'troupeau/styles.css' %}">
+  <link rel="stylesheet" href="{% static 'gestation/styles.css' %}">
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <i class="fa-solid fa-seedling fa-lg"></i>
+      <h1>Ferme MV Pahou</h1>
+    </div>
+
+    <nav class="menu">
+      {% with name=request.resolver_match.url_name %}
+        <p class="title">Navigation</p>
+
+        <a class="nav-link" href="{% url 'accueil' %}">
+          <i class="fa-solid fa-house"></i> Accueil
+        </a>
+
+        <a class="nav-link{% if name == 'gestation_list' %} active{% endif %}"
+           href="{% url 'gestation:gestation_list' %}">
+          <i class="fa-solid fa-baby-carriage"></i> Gestations (liste)
+        </a>
+
+        <a class="nav-link{% if name == 'gestation_create' %} active{% endif %}"
+           href="{% url 'gestation:gestation_create' %}">
+          <i class="fa-solid fa-plus"></i> Nouvelle gestation
+        </a>
+
+        <a class="nav-link{% if name == 'gestation_dashboard' %} active{% endif %}"
+           href="{% url 'gestation:gestation_dashboard' %}">
+          <i class="fa-solid fa-chart-bar"></i> Dashboard
+        </a>
+
+        <p class="title">Autres</p>
+        <a class="nav-link" href="{% url 'troupeau:liste' %}">
+          <i class="fa-solid fa-paw"></i> Troupeau
+        </a>
+        <a class="nav-link" href="{% url 'accouplement:liste' %}">
+          <i class="fa-solid fa-heart"></i> Accouplements
+        </a>
+      {% endwith %}
+    </nav>
+  </aside>
+
+  <!-- Contenu -->
+  <main class="content">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="h3 mb-0">
+        {% if form.instance.pk %}Modifier{% else %}Créer{% endif %} une gestation
+      </h1>
+      <div class="btn-toolbar gap-2">
+        <a href="{% url 'accueil' %}" class="btn btn-outline-secondary btn-sm">
+          <i class="fa-solid fa-house me-1"></i> Accueil
+        </a>
+        <a href="{% url 'gestation:gestation_list' %}" class="btn btn-outline-secondary btn-sm">
+          ← Retour à la liste
+        </a>
+      </div>
+    </div>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+          {% for err in form.non_field_errors %}{{ err }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="card mb-3">
+        <div class="card-header bg-light"><strong>Informations</strong></div>
+        <div class="card-body row g-3">
+          <div class="col-md-6">
+            {{ form.boucle_brebis.label_tag }}
+            {{ form.boucle_brebis }}
+            {% for err in form.boucle_brebis.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+          </div>
+
+          <div class="col-md-3">
+            {{ form.date_gestation.label_tag }}
+            {{ form.date_gestation }}
+            {% for err in form.date_gestation.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">Mise-bas (estimée)</label>
+            <input class="form-control" type="text" disabled
+                   value="{% if form.instance.pk and form.instance.date_estimee_mise_bas %}{{ form.instance.date_estimee_mise_bas|date:'d/m/Y' }}{% else %}—{% endif %}">
+          </div>
+
+          <div class="col-md-4">
+            {{ form.methode_confirmation.label_tag }}
+            {{ form.methode_confirmation }}
+            {% for err in form.methode_confirmation.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+          </div>
+
+          <div class="col-md-4">
+            {{ form.etat_gestation.label_tag }}
+            {{ form.etat_gestation }}
+            {% for err in form.etat_gestation.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+          </div>
+
+          <div class="col-12">
+            {{ form.observations.label_tag }}
+            {{ form.observations }}
+            {% for err in form.observations.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2">
+        <a href="{% url 'gestation:gestation_list' %}" class="btn btn-outline-secondary">Annuler</a>
+        <button type="submit" class="btn btn-primary">
+          <i class="fa-solid fa-save me-1"></i> Enregistrer
+        </button>
+      </div>
+    </form>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

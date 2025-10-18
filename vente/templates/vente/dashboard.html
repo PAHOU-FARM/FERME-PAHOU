@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  {% load static %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ventes — Dashboard</title>
+
+  <!-- CDNs -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+  <!-- Styles communs (layout .layout + sidebar) -->
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+  <link rel="stylesheet" href="{% static 'troupeau/styles.css' %}">
+  {# Optionnel : thème ventes #}
+  {# <link rel="stylesheet" href="{% static 'vente/styles.css' %}"> #}
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <i class="fa-solid fa-seedling fa-lg"></i>
+      <h1>Ferme MV Pahou</h1>
+    </div>
+
+    <nav class="menu">
+      {% with name=request.resolver_match.url_name %}
+        <p class="title">Navigation</p>
+
+        <a class="nav-link" href="{% url 'accueil' %}">
+          <i class="fa-solid fa-house"></i> Accueil
+        </a>
+
+        <a class="nav-link{% if name == 'vente_list' %} active{% endif %}" href="{% url 'vente:vente_list' %}">
+          <i class="fa-regular fa-rectangle-list"></i> Liste des ventes
+        </a>
+
+        <a class="nav-link{% if name == 'vente_create' %} active{% endif %}" href="{% url 'vente:vente_create' %}">
+          <i class="fa-solid fa-plus"></i> Nouvelle vente
+        </a>
+
+        <a class="nav-link{% if name == 'dashboard' %} active{% endif %}" href="{% url 'vente:dashboard' %}">
+          <i class="fa-solid fa-chart-pie"></i> Dashboard
+        </a>
+
+        <p class="title">Troupeau</p>
+        <a class="nav-link" href="{% url 'troupeau:liste' %}">
+          <i class="fa-solid fa-paw"></i> Liste des animaux
+        </a>
+      {% endwith %}
+    </nav>
+  </aside>
+
+  <!-- Contenu -->
+  <main class="content">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="h3 m-0">Dashboard — Ventes</h1>
+      <div class="btn-toolbar gap-2">
+        <a class="btn btn-outline-secondary btn-sm" href="{% url 'accueil' %}">
+          <i class="fa-solid fa-house me-1"></i> Accueil
+        </a>
+        <a class="btn btn-outline-secondary btn-sm" href="{% url 'vente:vente_list' %}">
+          <i class="fa-regular fa-rectangle-list me-1"></i> Liste
+        </a>
+        <a class="btn btn-primary btn-sm" href="{% url 'vente:vente_create' %}">
+          <i class="fa-solid fa-plus me-1"></i> Nouvelle vente
+        </a>
+      </div>
+    </div>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} mb-3">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- Filtres simples -->
+    <form method="get" class="row g-2 mb-3">
+      <div class="col-sm-6 col-md-4">
+        <label for="q" class="form-label">Recherche</label>
+        <input id="q" name="q" type="text" class="form-control" value="{{ filters.q }}">
+      </div>
+      <div class="col-6 col-md-2">
+        <label for="from" class="form-label">Du</label>
+        <input id="from" name="from" type="date" class="form-control" value="{{ filters.from }}">
+      </div>
+      <div class="col-6 col-md-2">
+        <label for="to" class="form-label">Au</label>
+        <input id="to" name="to" type="date" class="form-control" value="{{ filters.to }}">
+      </div>
+      <div class="col-md-4 d-flex align-items-end justify-content-end">
+        <button class="btn btn-outline-secondary" type="submit">
+          <i class="fa-solid fa-filter me-1"></i> Filtrer
+        </button>
+      </div>
+    </form>
+
+    <!-- KPIs -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <div>
+              <div class="text-muted small">Total ventes</div>
+              <div class="fs-3 fw-bold">{{ total }}</div>
+            </div>
+            <i class="fa-solid fa-layer-group opacity-75" style="font-size:1.6rem"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <div>
+              <div class="text-muted small">CA (période)</div>
+              <div class="fs-3 fw-bold">{{ total_prix|floatformat:2 }} FCFA</div>
+            </div>
+            <i class="fa-solid fa-sack-dollar opacity-75" style="font-size:1.6rem"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <div>
+              <div class="text-muted small">Poids moyen</div>
+              <div class="fs-3 fw-bold">{{ poids_moyen|floatformat:2 }} kg</div>
+            </div>
+            <i class="fa-solid fa-weight-scale opacity-75" style="font-size:1.6rem"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Par type d’acheteur / Par propriétaire -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-header bg-light fw-semibold">
+            <i class="fa-solid fa-users me-1"></i> Par type d’acheteur
+          </div>
+          <div class="card-body">
+            {% if par_type %}
+              <div class="table-responsive">
+                <table class="table table-sm align-middle">
+                  <thead class="table-light">
+                    <tr><th>Type</th><th class="text-end">#</th></tr>
+                  </thead>
+                  <tbody>
+                  {% for it in par_type %}
+                    <tr>
+                      <td>{{ it.type_acheteur|default:"—" }}</td>
+                      <td class="text-end">{{ it.c }}</td>
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <div class="text-muted">Aucune donnée.</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-header bg-light fw-semibold">
+            <i class="fa-solid fa-user-tag me-1"></i> Par propriétaire
+          </div>
+          <div class="card-body">
+            {% if par_proprio %}
+              <div class="table-responsive">
+                <table class="table table-sm align-middle">
+                  <thead class="table-light">
+                    <tr><th>Propriétaire</th><th class="text-end">#</th></tr>
+                  </thead>
+                  <tbody>
+                  {% for it in par_proprio %}
+                    <tr>
+                      <td>{{ it.proprietaire_ovin|default:"—" }}</td>
+                      <td class="text-end">{{ it.c }}</td>
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <div class="text-muted">Aucune donnée.</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Par mois -->
+    <div class="card">
+      <div class="card-header bg-light fw-semibold">
+        <i class="fa-regular fa-calendar-days me-1"></i> Ventes par mois
+      </div>
+      <div class="card-body">
+        {% if par_mois %}
+          <div class="table-responsive">
+            <table class="table table-sm align-middle">
+              <thead class="table-light">
+                <tr><th>Mois</th><th class="text-end">Ventes</th><th class="text-end">Total (FCFA)</th></tr>
+              </thead>
+              <tbody>
+              {% for r in par_mois %}
+                <tr>
+                  <td>{{ r.date_vente__month }}/{{ r.date_vente__year }}</td>
+                  <td class="text-end">{{ r.n }}</td>
+                  <td class="text-end">{{ r.total|floatformat:2 }}</td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="text-muted">Aucune donnée.</div>
+        {% endif %}
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+/* alimentation/styles.css — sidebar qui NE chevauche PAS le contenu */
+
+/* ===== Reset léger ===== */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; background:#f6f8fc; }
+
+/* ===== Variables ===== */
+:root{
+  --sidebar-w: 268px;
+  --sidebar-bg: #0b132b;
+  --sidebar-fg: #e0e6ed;
+  --sidebar-fg-muted: #9fb3c8;
+  --sidebar-active: #1c2541;
+  --brand: #3a86ff;
+}
+
+/* ===== Layout principal ===== */
+.layout{
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  /* IMPORTANT : pas de overflow:hidden ici, ça casse position:sticky */
+  overflow-x: clip;   /* évite les scrollbars horizontales fantômes */
+  overflow-y: visible;
+}
+
+/* Sidebar à largeur fixe, scrollable si contenu long.
+   Pas de position:fixed => elle ne recouvre jamais le contenu. */
+.layout > .sidebar{
+  flex: 0 0 var(--sidebar-w);
+  width: var(--sidebar-w);
+  max-width: var(--sidebar-w);
+  background: var(--sidebar-bg);
+  color: var(--sidebar-fg);
+  display: flex;
+  flex-direction: column;
+
+  /* Reste visible au scroll sans recouvrir le contenu */
+  position: sticky !important;
+  top: 0;
+  align-self: flex-start;  /* fix Safari sticky dans un flex container */
+  height: 100vh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+
+  box-shadow: 2px 0 12px rgba(0,0,0,.08);
+  z-index: 1; /* sous le contenu “flottant” éventuel */
+}
+
+/* Marque & navigation */
+.brand{
+  display: flex; align-items: center; gap: .65rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.brand i{ color: var(--brand); }
+.brand h1{ font-size: 1.05rem; margin:0; letter-spacing:.2px; }
+
+.menu{ padding:.5rem; }
+.menu .title{
+  font-size:.8rem; color:var(--sidebar-fg-muted);
+  text-transform:uppercase; letter-spacing:.12rem;
+  padding:.75rem 1rem .25rem; margin:0;
+}
+.nav-link{
+  color:var(--sidebar-fg);
+  padding:.6rem 1rem; border-radius:.55rem; margin:.15rem .5rem;
+  display:flex; align-items:center; gap:.6rem;
+  transition: background .18s ease, transform .06s ease;
+  text-decoration:none;
+}
+.nav-link:hover{ background:var(--sidebar-active); transform: translateX(2px); }
+.nav-link.active{ background:var(--sidebar-active); }
+.nav-link i{ width:20px; text-align:center; color:#8fb3ff; }
+
+/* ===== Zone contenu ===== */
+.layout > .content{
+  flex: 1 1 auto;       /* prend tout l’espace restant */
+  min-width: 0;         /* évite overflow horizontal (tables) */
+  padding: 24px;
+  background: #f6f8fc;
+  position: relative;
+  z-index: 2;           /* au-dessus de la sidebar si éléments se superposent par erreur */
+}
+
+/* Cartes “stats” (optionnel) */
+.stat-card .stat-label{ font-size:.85rem; color:#6b7280; }
+.stat-card .stat-value{ font-size:1.4rem; font-weight:700; }
+
+/* ===== Responsif ===== */
+@media (max-width: 992px){
+  .layout{
+    flex-direction: column;   /* la sidebar passe au-dessus du contenu */
+  }
+  .layout > .sidebar{
+    position: static !important;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .layout > .content{
+    padding: 16px;
+  }
+}
+
+/* ===== Garde-fous (au cas où un autre CSS forcerait du fixed) ===== */
+.sidebar,
+.layout > .sidebar{
+  /* annule toute tentative d’imposer fixed/absolute qui provoquerait le chevauchement */
+  left: auto !important;
+  right: auto !important;
+}
+.sidebar.is-fixed,
+.layout > .sidebar.is-fixed{
+  position: sticky !important;
+  top: 0 !important;
+}
+
+/* Empêche une marge externe de décaler le contenu sous la sidebar */
+.layout > .content,
+main.content{
+  margin: 0 !important;
+}

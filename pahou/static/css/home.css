@@ -1,0 +1,168 @@
+:root{
+  --sidebar-w: 268px;
+  --sidebar-bg: #0b132b;
+  --sidebar-fg: #e0e6ed;
+  --sidebar-fg-muted: #9fb3c8;
+  --sidebar-active: #1c2541;
+  --brand: #3a86ff;
+}
+
+html{
+  scroll-behavior:smooth;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+body{
+  background:#f6f8fc;
+  line-height:1.5;
+}
+
+.layout{
+  display:flex;
+  min-height:100vh;
+}
+
+/* ===== Sidebar ===== */
+.sidebar{
+  width:var(--sidebar-w);
+  background:var(--sidebar-bg);
+  color:var(--sidebar-fg);
+  display:flex;
+  flex-direction:column;
+  position:sticky;
+  top:0;
+  height:100vh;
+  box-shadow:2px 0 12px rgba(0,0,0,.08);
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:.65rem;
+  padding:1rem 1.25rem;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.brand i{color:var(--brand);}
+.brand h1{
+  font-size:1.05rem;
+  margin:0;
+  letter-spacing:.2px;
+  color:var(--sidebar-fg);
+}
+
+.menu{padding:.5rem;}
+.menu .title{
+  font-size:.8rem;
+  color:var(--sidebar-fg-muted);
+  text-transform:uppercase;
+  letter-spacing:.12rem;
+  padding:.75rem 1rem .25rem;
+  margin:0;
+}
+
+/* Scope les liens pour éviter de toucher les .nav-link Bootstrap ailleurs */
+.sidebar .nav-link{
+  color:var(--sidebar-fg);
+  padding:.6rem 1rem;
+  border-radius:.55rem;
+  margin:.15rem .5rem;
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  transition:background .18s ease, transform .06s ease, box-shadow .12s ease;
+  text-decoration:none;
+}
+.sidebar .nav-link i{
+  width:20px;
+  text-align:center;
+  color:#8fb3ff;
+}
+.sidebar .nav-link:hover{
+  background:var(--sidebar-active);
+  transform:translateX(2px);
+}
+.sidebar .nav-link:focus-visible{
+  outline:0;
+  box-shadow:0 0 0 .18rem rgba(58,134,255,.35);
+  background:var(--sidebar-active);
+}
+.sidebar .nav-link.active{
+  background:var(--sidebar-active);
+}
+
+/* ===== Contenu ===== */
+.content{
+  flex:1;
+  padding:2rem;
+  max-width:1200px;
+  margin:0 auto;
+}
+
+.hero{
+  background:#fff;
+  border:1px solid #e7eef7;
+  border-radius:.75rem;
+  padding:2rem;
+  box-shadow:0 6px 20px rgba(0,0,0,.06);
+}
+.hero h2{margin:0 0 .5rem;}
+.hero p{color:#6b7280; margin:0;}
+
+/* ===== Quick links ===== */
+.quick-links{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+.ql-card{
+  background:#fff;
+  border:1px solid #e7eef7;
+  border-radius:.75rem;
+  padding:1rem;
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+  transition:transform .08s ease, box-shadow .14s ease, border-color .14s ease;
+  text-decoration:none;
+  color:#111827;
+}
+.ql-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(0,0,0,.06);
+  border-color:#d9e6f7;
+}
+.ql-card:focus-visible{
+  outline:0;
+  box-shadow:0 0 0 .18rem rgba(58,134,255,.35), 0 8px 24px rgba(0,0,0,.06);
+  border-color:#bcd7ff;
+}
+.ql-card i{color:#3a86ff;}
+.muted{color:#6b7280;}
+
+/* ===== Préférences utilisateur ===== */
+@media (prefers-reduced-motion: reduce){
+  .sidebar .nav-link,
+  .ql-card{
+    transition:none !important;
+  }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 992px){
+  .sidebar{position:fixed; z-index:10;}
+  .content{padding:1.25rem;}
+}
+
+/* ===== (Optionnel) Dark mode léger ===== */
+@media (prefers-color-scheme: dark){
+  body{background:#0f1115;}
+  .content{color:#e9eef6;}
+  .hero, .ql-card{
+    background:#131825;
+    border-color:#1c2436;
+  }
+  .ql-card{color:#e9eef6;}
+  .ql-card i{color:#6aa3ff;}
+}

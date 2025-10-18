@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  {% load static %}
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — Vétérinaire</title>
+
+  <!-- CDNs -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"/>
+
+  <!-- Styles communs (layout .layout + sidebar) -->
+  <link rel="stylesheet" href="{% static 'css/home.css' %}"/>
+  <link rel="stylesheet" href="{% static 'troupeau/styles.css' %}"/>
+  <!-- Styles module (optionnel) -->
+  {# <link rel="stylesheet" href="{% static 'veterinaire/styles.css' %}"/> #}
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <i class="fa-solid fa-stethoscope fa-lg"></i>
+      <h1>Ferme MV Pahou</h1>
+    </div>
+    <nav class="menu">
+      {% with name=request.resolver_match.url_name %}
+        <p class="title">Navigation</p>
+
+        <a class="nav-link" href="{% url 'accueil' %}">
+          <i class="fa-solid fa-house"></i> Accueil
+        </a>
+
+        <a class="nav-link{% if name == 'veterinaire_list' %} active{% endif %}"
+           href="{% url 'veterinaire:veterinaire_list' %}">
+          <i class="fa-regular fa-rectangle-list"></i> Liste des visites
+        </a>
+
+        <a class="nav-link{% if name == 'veterinaire_create' %} active{% endif %}"
+           href="{% url 'veterinaire:veterinaire_create' %}">
+          <i class="fa-solid fa-plus"></i> Nouvelle visite
+        </a>
+
+        <a class="nav-link{% if name == 'veterinaire_dashboard' %} active{% endif %}"
+           href="{% url 'veterinaire:veterinaire_dashboard' %}">
+          <i class="fa-solid fa-chart-pie"></i> Dashboard
+        </a>
+
+        <p class="title">Troupeau</p>
+        <a class="nav-link" href="{% url 'troupeau:liste' %}">
+          <i class="fa-solid fa-paw"></i> Liste des animaux
+        </a>
+      {% endwith %}
+    </nav>
+  </aside>
+
+  <!-- Contenu -->
+  <main class="content">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="h3 mb-0">Dashboard vétérinaire</h1>
+      <div class="btn-toolbar gap-2">
+        <a href="{% url 'accueil' %}" class="btn btn-outline-secondary btn-sm">
+          <i class="fa-solid fa-house me-1"></i> Accueil
+        </a>
+        <a href="{% url 'veterinaire:veterinaire_list' %}" class="btn btn-outline-secondary btn-sm">
+          ← Liste
+        </a>
+      </div>
+    </div>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} mb-3" role="alert">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- Cartes de synthèse -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-4">
+        <div class="card text-white bg-primary h-100">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <div>
+              <div class="small text-white-50">Total visites</div>
+              <div class="fs-3 fw-bold">{{ total_visites|default:"0" }}</div>
+            </div>
+            <i class="fa-solid fa-notes-medical fs-3 opacity-75"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card text-white bg-success h-100">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <div>
+              <div class="small text-white-50">Coût total (FCFA)</div>
+              <div class="fs-3 fw-bold">{{ cout_total|default:"0" }}</div>
+            </div>
+            <i class="fa-solid fa-sack-dollar fs-3 opacity-75"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card text-white bg-secondary h-100">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <div>
+              <div class="small text-white-50">Derniers 30 jours</div>
+              <div class="fs-3 fw-bold">{{ derniers_30j|default:"0" }}</div>
+            </div>
+            <i class="fa-regular fa-calendar-check fs-3 opacity-75"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tableau par motif -->
+    <div class="card mb-4">
+      <div class="card-header bg-light fw-semibold">
+        <i class="fa-solid fa-list-check me-1"></i> Par motif
+      </div>
+      <div class="card-body">
+        {% if par_motif %}
+          <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Motif</th>
+                  <th class="text-end">Nombre</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in par_motif %}
+                  <tr>
+                    <td>{{ row.motif_de_la_visite }}</td>
+                    <td class="text-end">{{ row.c }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="text-muted">Aucune donnée.</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Dernières visites -->
+    <div class="card">
+      <div class="card-header bg-light fw-semibold">
+        <i class="fa-solid fa-clock-rotate-left me-1"></i> Dernières visites
+      </div>
+      <div class="card-body">
+        {% if derniers %}
+          <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Date</th>
+                  <th>Ovin</th>
+                  <th>Vétérinaire</th>
+                  <th>Motif</th>
+                  <th>Coût</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for v in derniers %}
+                  <tr>
+                    <td>{{ v.date_visite|date:"d/m/Y" }}</td>
+                    <td>
+                      {% if v.troupeau %}
+                        <a href="{% url 'troupeau:detail' v.troupeau.pk %}">{{ v.troupeau.boucle_ovin }}</a>
+                      {% else %}—{% endif %}
+                    </td>
+                    <td>{{ v.nom_veterinaire|default:"—" }}</td>
+                    <td class="text-truncate" style="max-width:260px;">{{ v.motif_de_la_visite|default:"—" }}</td>
+                    <td>{% if v.cout_visite %}{{ v.cout_visite }} FCFA{% else %}—{% endif %}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="text-muted">Aucune visite récente.</div>
+        {% endif %}
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

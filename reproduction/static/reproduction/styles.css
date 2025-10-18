@@ -1,0 +1,190 @@
+/* ==============================
+   Reproduction — Styles locaux + garde-fou layout
+   (complémente Bootstrap + thème troupeau)
+============================== */
+
+/* ===== Variables ===== */
+:root{
+  /* Layout */
+  --sidebar-w: 268px;
+
+  /* Thème local */
+  --card-bg: #ffffff;
+  --card-border: #dee2e6;
+  --muted: #6c757d;
+  --heading: #343a40;
+  --accent: #0d6efd;
+  --error: #dc3545;
+  --soft-shadow: 0 6px 18px rgba(0,0,0,.06);
+}
+
+/* ===== Base ===== */
+html, body {
+  height: 100%;
+  scroll-behavior: smooth;
+  background-color: #f8f9fa;
+  margin: 0;
+}
+
+/* ==============================
+   GARDE-FOU LAYOUT (NE PAS CHEVAUCHER)
+   — La sidebar reste à gauche, le contenu prend le reste.
+   — Mobile : la sidebar passe au-dessus.
+============================== */
+.layout{
+  display: flex !important;
+  align-items: stretch;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.layout > .sidebar{
+  flex: 0 0 var(--sidebar-w) !important;
+  width: var(--sidebar-w) !important;
+  max-width: var(--sidebar-w) !important;
+
+  /* empêcher tout "fixed" ou "absolute" venant d'ailleurs */
+  position: sticky !important;
+  top: 0;
+  left: auto !important;
+  right: auto !important;
+
+  height: 100vh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  z-index: 1; /* sous d’éventuels menus flottants */
+}
+
+.layout > .content{
+  flex: 1 1 auto !important;
+  min-width: 0 !important;   /* évite le scroll horizontal avec les tables */
+  padding: 24px !important;
+  background: #f8f9fa;
+}
+
+/* Désactive toute classe “fixed” héritée par mégarde */
+.sidebar.is-fixed,
+.sidebar.fixed,
+.sidebar.sticky-top,
+.sidebar[style*="position:fixed"]{
+  position: sticky !important;
+  left: auto !important;
+  right: auto !important;
+  top: 0 !important;
+}
+
+/* Empêche toute marge forcée qui glisserait le contenu sous la sidebar */
+.layout > .content,
+main.content {
+  margin: 0 !important;
+}
+
+/* Responsive */
+@media (max-width: 992px){
+  .layout{ flex-direction: column !important; }
+  .layout > .sidebar{
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+  .layout > .content{ padding: 16px !important; }
+}
+
+/* ==============================
+   Styles UI locaux (cartes, tableaux, formulaires…)
+============================== */
+
+/* Titres */
+h1, .h1, h2, .h2, h3, .h3 {
+  color: var(--heading);
+  letter-spacing: .2px;
+}
+
+/* Cartes */
+.card {
+  border-radius: .5rem;
+  border: 1px solid var(--card-border);
+  background-color: var(--card-bg);
+  box-shadow: var(--soft-shadow);
+}
+
+/* Boutons */
+.btn {
+  border-radius: .5rem;
+  transition: transform .06s ease, box-shadow .12s ease;
+}
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0,0,0,.08);
+}
+
+/* Tableaux */
+.table { margin-bottom: 0; }
+.table thead th {
+  font-weight: 600;
+  color: var(--heading);
+  border-top: none;
+  white-space: nowrap;
+}
+.table-hover tbody tr:hover {
+  background-color: rgba(13,110,253,.05);
+}
+.table .text-truncate { max-width: 360px; }
+
+/* Formulaires */
+.form-label {
+  font-weight: 600;
+  color: var(--heading);
+}
+.form-control,
+.form-select {
+  border-radius: .5rem;
+}
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 .2rem rgba(13,110,253,.15);
+}
+
+/* Messages */
+.alert {
+  border-radius: .5rem;
+  box-shadow: var(--soft-shadow);
+}
+
+/* Petits blocs clé/valeur (si utilisés) */
+.kv {
+  display: flex;
+  gap: .5rem;
+  margin-bottom: .35rem;
+  align-items: baseline;
+}
+.kv .k {
+  min-width: 180px;
+  color: var(--muted);
+  font-weight: 600;
+}
+.kv .v {
+  flex: 1 1 auto;
+  min-width: 0;
+  word-wrap: break-word;
+}
+
+/* Badges doux (optionnels) */
+.badge-soft-success { background: #d1e7dd; color: #0f5132; }
+.badge-soft-secondary { background: #e2e3e5; color: #41464b; }
+
+/* Pagination */
+.pagination .page-link {
+  border-radius: .5rem;
+}
+.pagination .page-item.active .page-link {
+  box-shadow: var(--soft-shadow);
+}
+
+/* Responsive détails */
+@media (max-width: 768px) {
+  .kv .k { min-width: 140px; }
+}

@@ -1,0 +1,216 @@
+<!-- templates/embouche/dashboard.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  {% load static %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Embouche — Dashboard</title>
+
+  <!-- CDNs -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Layout commun (évite le .sidebar en position:fixed) -->
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+  <link rel="stylesheet" href="{% static 'troupeau/styles.css' %}">
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <i class="fa-solid fa-seedling fa-lg"></i>
+      <h1>Ferme MV Pahou</h1>
+    </div>
+
+    <nav class="menu">
+      {% with name=request.resolver_match.url_name %}
+        <p class="title">Embouche</p>
+        <a class="nav-link{% if name == 'embouche_list' %} active{% endif %}" href="{% url 'embouche:embouche_list' %}">
+          <i class="fas fa-list"></i> Liste
+        </a>
+        <a class="nav-link{% if name == 'embouche_create' %} active{% endif %}" href="{% url 'embouche:embouche_create' %}">
+          <i class="fas fa-plus"></i> Nouvelle embouche
+        </a>
+        <!-- ✅ Lien Dashboard dans la sidebar -->
+        <a class="nav-link{% if name == 'dashboard' %} active{% endif %}" href="{% url 'embouche:dashboard' %}">
+          <i class="fas fa-chart-bar"></i> Dashboard
+        </a>
+
+        <p class="title">Troupeau</p>
+        <a class="nav-link" href="{% url 'troupeau:liste' %}">
+          <i class="fas fa-paw"></i> Retour troupeau
+        </a>
+      {% endwith %}
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <main class="content">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="h3 mb-0">Embouche — Dashboard</h1>
+      <div class="btn-toolbar gap-2">
+        <!-- ✅ Bouton Accueil en en-tête -->
+        <a href="{% url 'accueil' %}" class="btn btn-outline-secondary btn-sm">
+          <i class="fa-solid fa-house me-1"></i> Accueil
+        </a>
+        <a href="{% url 'embouche:embouche_list' %}" class="btn btn-outline-secondary btn-sm">
+          Voir la liste
+        </a>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- Cartes de synthèse -->
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-3">
+        <div class="card text-white bg-primary h-100">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <div>
+              <div class="small text-white-50">Total</div>
+              <div class="fs-3 fw-bold">{{ stats.total|default:"0" }}</div>
+            </div>
+            <i class="fa-solid fa-layer-group fs-3 opacity-75"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card text-white bg-secondary h-100">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <div>
+              <div class="small text-white-50">En cours</div>
+              <div class="fs-3 fw-bold">{{ stats.en_cours|default:"0" }}</div>
+            </div>
+            <i class="fa-solid fa-hourglass-half fs-3 opacity-75"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card text-white bg-success h-100">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <div>
+              <div class="small text-white-50">Terminées</div>
+              <div class="fs-3 fw-bold">{{ stats.terminees|default:"0" }}</div>
+            </div>
+            <i class="fa-solid fa-check fs-3 opacity-75"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card text-white bg-info h-100">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <div>
+              <div class="small text-white-50">Gain moyen (kg)</div>
+              <div class="fs-3 fw-bold">
+                {% if stats.gain_moy is not None %}{{ stats.gain_moy|floatformat:1 }}{% else %}—{% endif %}
+              </div>
+            </div>
+            <i class="fa-solid fa-weight-scale fs-3 opacity-75"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Durée moyenne + répartition -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-header bg-light"><strong>Durée moyenne (jours)</strong></div>
+          <div class="card-body">
+            <div class="display-6">
+              {% if stats.duree_moy is not None %}{{ stats.duree_moy|floatformat:0 }}{% else %}—{% endif %}
+            </div>
+            <div class="text-muted">Calculée sur les embouches terminées.</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-header bg-light"><strong>Répartition propriétaire</strong></div>
+          <div class="card-body">
+            {% if repartition_proprietaire %}
+              <div class="table-responsive">
+                <table class="table table-sm table-hover align-middle">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Propriétaire</th>
+                      <th class="text-end">Nombre</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for row in repartition_proprietaire %}
+                      <tr>
+                        <td>{{ row.proprietaire }}</td>
+                        <td class="text-end">{{ row.c }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <div class="text-muted">Aucune donnée.</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Derniers enregistrements -->
+    <div class="card mb-4">
+      <div class="card-header bg-light d-flex justify-content-between align-items-center">
+        <strong>Dernières embouches</strong>
+        <a href="{% url 'embouche:embouche_list' %}" class="btn btn-sm btn-outline-secondary">Tout voir</a>
+      </div>
+      <div class="card-body">
+        {% if derniers %}
+          <div class="table-responsive">
+            <table class="table table-sm table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Boucle</th>
+                  <th>Sexe</th>
+                  <th>Race</th>
+                  <th>Entrée</th>
+                  <th>Fin</th>
+                  <th class="text-end">Gain (kg)</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for e in derniers %}
+                <tr>
+                  <td><strong>{{ e.boucle_ovin.boucle_ovin }}</strong></td>
+                  <td>{{ e.boucle_ovin.get_sexe_display }}</td>
+                  <td>{{ e.boucle_ovin.get_race_display }}</td>
+                  <td>{{ e.date_entree|date:"d/m/Y" }}</td>
+                  <td>{{ e.date_fin|date:"d/m/Y"|default:"—" }}</td>
+                  <td class="text-end">
+                    {% if e.poids_engraissement is not None %}
+                      {{ e.poids_engraissement|floatformat:1 }}
+                    {% else %}—{% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="text-muted">Aucun enregistrement récent.</div>
+        {% endif %}
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

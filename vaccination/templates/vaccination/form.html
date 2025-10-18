@@ -1,0 +1,170 @@
+<!-- templates/vaccination/form.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  {% load static %}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% if form.instance.pk %}Modifier{% else %}Nouvelle{% endif %} vaccination</title>
+
+  <!-- CDNs -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+
+  <!-- Styles communs (layout .layout + sidebar) -->
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+  <link rel="stylesheet" href="{% static 'troupeau/styles.css' %}">
+  {# <link rel="stylesheet" href="{% static 'vaccination/styles.css' %}"> #}
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <i class="fa-solid fa-seedling fa-lg"></i>
+      <h1>Ferme MV Pahou</h1>
+    </div>
+    <nav class="menu">
+      {% with name=request.resolver_match.url_name %}
+        <p class="title">Navigation</p>
+
+        <a class="nav-link" href="{% url 'accueil' %}">
+          <i class="fa-solid fa-house"></i> Accueil
+        </a>
+
+        <a class="nav-link{% if name == 'vaccination_list' %} active{% endif %}" href="{% url 'vaccination:vaccination_list' %}">
+          <i class="fa-regular fa-rectangle-list"></i> Liste des vaccinations
+        </a>
+        <a class="nav-link{% if name == 'vaccination_create' %} active{% endif %}" href="{% url 'vaccination:vaccination_create' %}">
+          <i class="fa-solid fa-syringe"></i> Nouvelle vaccination
+        </a>
+        <a class="nav-link{% if name == 'vaccination_dashboard' %} active{% endif %}" href="{% url 'vaccination:vaccination_dashboard' %}">
+          <i class="fa-solid fa-chart-pie"></i> Dashboard
+        </a>
+
+        <p class="title">Troupeau</p>
+        <a class="nav-link" href="{% url 'troupeau:liste' %}">
+          <i class="fa-solid fa-paw"></i> Liste des animaux
+        </a>
+      {% endwith %}
+    </nav>
+  </aside>
+
+  <!-- Contenu -->
+  <main class="content">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="h3 mb-0">{% if form.instance.pk %}Modifier{% else %}Nouvelle{% endif %} vaccination</h1>
+      <div class="btn-toolbar gap-2">
+        <a class="btn btn-outline-secondary btn-sm" href="{% url 'accueil' %}">
+          <i class="fa-solid fa-house me-1"></i> Accueil
+        </a>
+        <a class="btn btn-outline-secondary btn-sm" href="{% url 'vaccination:vaccination_list' %}">
+          ← Retour à la liste
+        </a>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} mb-3">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+          {% for err in form.non_field_errors %}{{ err }}<br>{% endfor %}
+        </div>
+      {% endif %}
+
+      <!-- Identification -->
+      <div class="card mb-3">
+        <div class="card-header bg-light"><strong>Identification</strong></div>
+        <div class="card-body row g-3">
+          {% if form.boucle_ovin %}
+            <div class="col-md-6">
+              {{ form.boucle_ovin.label_tag }}
+              {{ form.boucle_ovin }}
+              {% for e in form.boucle_ovin.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+            </div>
+          {% endif %}
+          {% if form.date_vaccination %}
+            <div class="col-md-6">
+              {{ form.date_vaccination.label_tag }}
+              {{ form.date_vaccination }}
+              {% for e in form.date_vaccination.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Détails vaccin -->
+      <div class="card mb-3">
+        <div class="card-header bg-light"><strong>Détails du vaccin</strong></div>
+        <div class="card-body row g-3">
+          {% if form.type_vaccin %}
+            <div class="col-md-6">
+              {{ form.type_vaccin.label_tag }}
+              {{ form.type_vaccin }}
+              {% for e in form.type_vaccin.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+            </div>
+          {% endif %}
+          {% if form.nom_vaccin %}
+            <div class="col-md-6">
+              {{ form.nom_vaccin.label_tag }}
+              {{ form.nom_vaccin }}
+              {% for e in form.nom_vaccin.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+            </div>
+          {% endif %}
+          {% if form.dose_vaccin %}
+            <div class="col-md-4">
+              {{ form.dose_vaccin.label_tag }}
+              {{ form.dose_vaccin }}
+              {% for e in form.dose_vaccin.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+            </div>
+          {% endif %}
+          {% if form.voie_administration %}
+            <div class="col-md-4">
+              {{ form.voie_administration.label_tag }}
+              {{ form.voie_administration }}
+              {% for e in form.voie_administration.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+            </div>
+          {% endif %}
+          {% if form.nom_veterinaire %}
+            <div class="col-md-4">
+              {{ form.nom_veterinaire.label_tag }}
+              {{ form.nom_veterinaire }}
+              {% for e in form.nom_veterinaire.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Observations -->
+      {% if form.observations %}
+        <div class="card mb-3">
+          <div class="card-header bg-light"><strong>Observations</strong></div>
+          <div class="card-body">
+            {{ form.observations.label_tag }}
+            {{ form.observations }}
+            {% for e in form.observations.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="d-flex justify-content-between">
+        <a class="btn btn-outline-secondary" href="{% url 'vaccination:vaccination_list' %}">Annuler</a>
+        <button type="submit" class="btn btn-primary">
+          <i class="fa-solid fa-floppy-disk me-1"></i> Enregistrer
+        </button>
+      </div>
+    </form>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

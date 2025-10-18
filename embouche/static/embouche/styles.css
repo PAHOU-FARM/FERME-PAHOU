@@ -1,0 +1,80 @@
+/* ==============================
+   Embouche – thème léger
+============================== */
+:root{
+  --card-bg: #fff;
+  --card-border: #dee2e6;
+  --muted: #6c757d;
+  --heading: #343a40;
+  --accent: #0d6efd;
+  --danger: #dc3545;
+  --soft-shadow: 0 6px 18px rgba(0,0,0,.06);
+}
+
+/* Base */
+html, body {
+  background-color: #f8f9fa;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+h1, .h1, h2, .h2, h3, .h3 { color: var(--heading); letter-spacing: .2px; }
+
+/* Cartes */
+.card {
+  border: 1px solid var(--card-border);
+  border-radius: .6rem;
+  background: var(--card-bg);
+  box-shadow: var(--soft-shadow);
+}
+.card-header {
+  border-bottom-color: var(--card-border);
+}
+
+/* Boutons */
+.btn {
+  border-radius: .5rem;
+  transition: transform .06s ease, box-shadow .12s ease;
+}
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0,0,0,.08);
+}
+
+/* Formulaires */
+.form-label { font-weight: 600; color: var(--heading); }
+.form-control, .form-select, textarea { border-radius: .5rem; }
+.form-control:focus, .form-select:focus, textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 .2rem rgba(13,110,253,.15);
+  outline: 0;
+}
+
+/* Messages */
+.alert { border-radius: .5rem; box-shadow: var(--soft-shadow); }
+
+/* Tableaux */
+.table { margin-bottom: 0; }
+.table thead th {
+  font-weight: 600;
+  color: var(--heading);
+  border-top: none;
+}
+.table-hover tbody tr:hover { background-color: rgba(13,110,253,.05); }
+.table .num { text-align: right; white-space: nowrap; }
+.table .muted { color: var(--muted); }
+
+/* Badges d’état (ex: en cours / terminé) */
+.badge-en-cours { background: #6c757d; }
+.badge-terminee { background: #198754; }
+
+/* Petites utilitaires */
+.text-muted { color: var(--muted) !important; }
+.kv { display:flex; gap:.5rem; margin-bottom:.35rem; align-items:baseline; }
+.kv .k { min-width: 160px; color: var(--muted); font-weight:600; }
+.kv .v { flex:1 1 auto; min-width:0; word-wrap:break-word; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .btn { width: 100%; }
+  .btn + .btn { margin-top: .5rem; }
+}

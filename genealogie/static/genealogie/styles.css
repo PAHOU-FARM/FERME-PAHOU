@@ -1,0 +1,121 @@
+/* ==============================
+   Généalogie – variables locales
+============================== */
+:root {
+  --genea-accent: #0d6efd;
+  --genea-muted: #6c757d;
+  --genea-danger: #dc3545;
+  --genea-warning: #ffc107;
+  --genea-info: #0dcaf0;
+  --genea-success: #198754;
+
+  --card-bg: #fff;
+  --card-border: #dee2e6;
+  --soft-shadow: 0 6px 18px rgba(0,0,0,.06);
+}
+
+/* ==============================
+   Mise en page (standalone)
+============================== */
+.sidebar{
+  position:fixed; top:0; bottom:0; left:0; z-index:100;
+  padding:48px 0 0;
+  box-shadow: inset -1px 0 0 rgba(0,0,0,.06);
+}
+.main-content{ margin-left:250px; padding:20px; }
+@media (max-width:768px){
+  .sidebar{ position:static; height:auto; padding-top:0; }
+  .main-content{ margin-left:0; }
+}
+
+/* ==============================
+   Cartes & tables
+============================== */
+.card {
+  border: 1px solid var(--card-border);
+  border-radius: .5rem;
+  background: var(--card-bg);
+  box-shadow: var(--soft-shadow);
+}
+
+.table thead th {
+  border-top: none;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.table-hover tbody tr:hover {
+  background: rgba(13,110,253, .05);
+}
+
+/* ==============================
+   Badges de risque (Fa)
+============================== */
+.badge-risk { font-weight: 600; }
+.risk-low      { background: var(--genea-success) !important; color:#fff !important; }
+.risk-mid      { background: var(--genea-info) !important;    color:#212529 !important; }
+.risk-high     { background: var(--genea-warning) !important; color:#212529 !important; }
+.risk-veryhigh { background: var(--genea-danger) !important;  color:#fff !important; }
+
+/* Helpers pour puces/chips si besoin */
+.chip {
+  display:inline-block; padding:.25rem .5rem; border-radius:999px;
+  background:#f1f3f5; font-size:.875rem;
+}
+
+/* ==============================
+   Blocs clé/valeur (lecture)
+============================== */
+.kv { display:flex; gap:.5rem; margin-bottom:.35rem; align-items:baseline; }
+.kv .k { min-width: 180px; color: var(--genea-muted); font-weight: 600; }
+.kv .v { flex:1 1 auto; min-width:0; word-wrap:break-word; }
+
+/* ==============================
+   Formulaires
+============================== */
+.form-label { font-weight:600; color:#343a40; }
+.form-control, .form-select { border-radius:.5rem; }
+.form-control:focus, .form-select:focus {
+  border-color: var(--genea-accent);
+  box-shadow: 0 0 0 .2rem rgba(13,110,253,.15);
+}
+
+/* ==============================
+   Boutons (petit lift)
+============================== */
+.btn { border-radius:.5rem; transition: transform .06s ease, box-shadow .12s ease; }
+.btn:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(0,0,0,.08); }
+
+/* ==============================
+   Messages
+============================== */
+.alert { border-radius:.5rem; box-shadow: var(--soft-shadow); }
+
+/* ==============================
+   Utilitaires
+============================== */
+.text-muted { color: var(--genea-muted) !important; }
+.text-truncate-280 { max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ==============================
+   Dashboard tuiles
+============================== */
+.tile {
+  border-radius:.75rem; padding:1rem;
+  display:flex; align-items:center; justify-content:space-between;
+  color:#fff; box-shadow: var(--soft-shadow);
+}
+.tile .small { opacity:.85; }
+
+/* Couleurs rapides */
+.tile-primary { background:#0d6efd; }
+.tile-success { background:#198754; }
+.tile-info    { background:#0dcaf0; color:#212529; }
+.tile-warning { background:#ffc107; color:#212529; }
+.tile-danger  { background:#dc3545; }
+
+/* ==============================
+   Responsive affinement
+============================== */
+@media (max-width: 768px) {
+  .kv .k { min-width: 130px; }
+}

@@ -1,0 +1,170 @@
+/* ==============================
+   Croissance – Thème module
+   Fichier : static/croissance/styles.css
+   Cohérent avec Bootstrap 5 + thème Troupeau
+============================== */
+
+/* Variables */
+:root{
+  --cro-card-bg: #ffffff;
+  --cro-card-border: #dee2e6;
+  --cro-muted: #6c757d;
+  --cro-heading: #343a40;
+  --cro-accent: #0d6efd;
+  --cro-soft-shadow: 0 6px 18px rgba(0,0,0,.06);
+
+  --cro-good-bg: #d1e7dd;   /* Bon */
+  --cro-good-fg: #0f5132;
+
+  --cro-mid-bg: #e2e3e5;    /* Moyen (gris) */
+  --cro-mid-fg: #41464b;
+
+  --cro-bad-bg: #f8d7da;    /* Mauvais */
+  --cro-bad-fg: #842029;
+
+  --cro-sick-bg: #cff4fc;   /* Malade (info) */
+  --cro-sick-fg: #055160;
+
+  --cro-retard-bg: #fff3cd; /* Retard de croissance */
+  --cro-retard-fg: #664d03;
+
+  --cro-accel-bg: #cfe2ff;  /* Croissance accélérée */
+  --cro-accel-fg: #084298;
+}
+
+/* Base douce */
+html, body{
+  scroll-behavior: smooth;
+}
+h1,.h1,h2,.h2,h3,.h3{
+  color: var(--cro-heading);
+  letter-spacing: .2px;
+}
+
+/* Cartes */
+.cro-card,
+.card.cro-card{
+  background: var(--cro-card-bg);
+  border: 1px solid var(--cro-card-border);
+  border-radius: .5rem;
+  box-shadow: var(--cro-soft-shadow);
+}
+
+/* KPI (cartes de synthèse) */
+.cro-kpi .label{
+  font-size: .85rem;
+  color: rgba(255,255,255,.7);
+}
+.cro-kpi .value{
+  font-weight: 700;
+  font-size: 1.75rem;
+}
+
+/* Tableaux */
+.cro-table{
+  margin-bottom: 0;
+}
+.cro-table thead th{
+  font-weight: 600;
+  color: var(--cro-heading);
+  border-top: none;
+  white-space: nowrap;
+}
+.cro-table tbody tr:hover{
+  background-color: rgba(13,110,253,.05);
+}
+.cro-td-num{
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Formulaires */
+.form-label{
+  font-weight: 600;
+  color: var(--cro-heading);
+}
+.form-control,
+.form-select{
+  border-radius: .5rem;
+}
+.form-control:focus,
+.form-select:focus{
+  border-color: var(--cro-accent);
+  box-shadow: 0 0 0 .2rem rgba(13,110,253,.15);
+}
+
+/* Boutons */
+.btn{
+  border-radius: .5rem;
+  transition: transform .06s ease, box-shadow .12s ease;
+}
+.btn:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0,0,0,.08);
+}
+
+/* Badges d’état de santé */
+.badge.etat-bon{
+  background: var(--cro-good-bg);
+  color: var(--cro-good-fg);
+}
+.badge.etat-moyen{
+  background: var(--cro-mid-bg);
+  color: var(--cro-mid-fg);
+}
+.badge.etat-mauvais{
+  background: var(--cro-bad-bg);
+  color: var(--cro-bad-fg);
+}
+.badge.etat-malade{
+  background: var(--cro-sick-bg);
+  color: var(--cro-sick-fg);
+}
+
+/* Badges d’évaluation de croissance */
+.badge.eval-normale{
+  background: #e9ecef;
+  color: #495057;
+}
+.badge.eval-retard{
+  background: var(--cro-retard-bg);
+  color: var(--cro-retard-fg);
+}
+.badge.eval-accelere{
+  background: var(--cro-accel-bg);
+  color: var(--cro-accel-fg);
+}
+
+/* Chip générique */
+.cro-chip{
+  display:inline-block;
+  padding:.25rem .5rem;
+  border-radius:999px;
+  background:#f1f3f5;
+  font-size:.875rem;
+}
+
+/* Key/Value en lecture seule (détails) */
+.cro-kv{display:flex;gap:.5rem;margin-bottom:.35rem;align-items:baseline;}
+.cro-kv .k{min-width:180px;color:var(--cro-muted);font-weight:600;}
+.cro-kv .v{flex:1 1 auto;min-width:0;word-wrap:break-word;}
+
+/* Messages */
+.alert{
+  border-radius:.5rem;
+  box-shadow: var(--cro-soft-shadow);
+}
+
+/* Historique (badge/ligne) */
+.badge-historique{
+  background:#e2e3e5; color:#343a40;
+}
+tr.is-histo{
+  opacity:.82;
+}
+
+/* Responsive */
+@media (max-width: 768px){
+  .cro-kv .k{min-width:130px;}
+  .btn-group{flex-wrap:wrap;gap:.5rem;}
+}

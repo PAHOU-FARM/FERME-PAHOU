@@ -1,0 +1,135 @@
+<!-- templates/embouche/confirm_delete.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  {% load static %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Embouche — Confirmer la suppression</title>
+
+  <!-- CDNs -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+  <!-- Layout commun (évite les sidebars en position fixe) -->
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+  <link rel="stylesheet" href="{% static 'troupeau/styles.css' %}">
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <i class="fa-solid fa-seedling fa-lg"></i>
+      <h1>Ferme MV Pahou</h1>
+    </div>
+
+    <nav class="menu">
+      {% with name=request.resolver_match.url_name %}
+        <p class="title">Embouche</p>
+        <a class="nav-link{% if name == 'embouche_list' %} active{% endif %}" href="{% url 'embouche:embouche_list' %}">
+          <i class="fa-solid fa-list"></i> Liste
+        </a>
+        <a class="nav-link{% if name == 'embouche_create' %} active{% endif %}" href="{% url 'embouche:embouche_create' %}">
+          <i class="fa-solid fa-plus"></i> Nouvelle
+        </a>
+        <!-- ✅ Lien “Dashboard” demandé -->
+        <a class="nav-link{% if name == 'dashboard' %} active{% endif %}" href="{% url 'embouche:dashboard' %}">
+          <i class="fa-solid fa-chart-bar"></i> Dashboard
+        </a>
+
+        <p class="title">Troupeau</p>
+        <a class="nav-link" href="{% url 'troupeau:liste' %}">
+          <i class="fa-solid fa-paw"></i> Retour troupeau
+        </a>
+      {% endwith %}
+    </nav>
+  </aside>
+
+  <!-- Contenu -->
+  <main class="content">
+    {% with e=object|default:embouche %}
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="h4 mb-0">Confirmer la suppression</h1>
+      <div class="btn-toolbar gap-2">
+        <!-- ✅ Bouton Accueil en en-tête -->
+        <a href="{% url 'accueil' %}" class="btn btn-outline-secondary btn-sm">
+          <i class="fa-solid fa-house me-1"></i> Accueil
+        </a>
+        {% if e %}
+          <a class="btn btn-outline-secondary btn-sm" href="{% url 'embouche:embouche_detail' e.pk %}">
+            ← Retour au détail
+          </a>
+        {% else %}
+          <a class="btn btn-outline-secondary btn-sm" href="{% url 'embouche:embouche_list' %}">
+            ← Retour à la liste
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="alert alert-warning">
+      <i class="fa-solid fa-triangle-exclamation me-1"></i>
+      Cette action est <strong>irréversible</strong>. Voulez-vous vraiment supprimer cette embouche ?
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header bg-light"><strong>Résumé</strong></div>
+      <div class="card-body">
+        <div class="row gy-2">
+          <div class="col-md-6"><span class="text-muted">Boucle</span><div class="fw-semibold">
+            {% if e and e.boucle_ovin %}{{ e.boucle_ovin.boucle_ovin }}{% else %}—{% endif %}
+          </div></div>
+          <div class="col-md-3"><span class="text-muted">Entrée</span><div class="fw-semibold">
+            {% if e and e.date_entree %}{{ e.date_entree|date:"d/m/Y" }}{% else %}—{% endif %}
+          </div></div>
+          <div class="col-md-3"><span class="text-muted">Fin</span><div class="fw-semibold">
+            {% if e and e.date_fin %}{{ e.date_fin|date:"d/m/Y" }}{% else %}—{% endif %}
+          </div></div>
+
+          <div class="col-md-3"><span class="text-muted">Poids initial</span><div class="fw-semibold">
+            {% if e and e.poids_initial is not None %}{{ e.poids_initial|floatformat:1 }} kg{% else %}—{% endif %}
+          </div></div>
+          <div class="col-md-3"><span class="text-muted">Poids final</span><div class="fw-semibold">
+            {% if e and e.poids_fin is not None %}{{ e.poids_fin|floatformat:1 }} kg{% else %}—{% endif %}
+          </div></div>
+          <div class="col-md-3"><span class="text-muted">Durée</span><div class="fw-semibold">
+            {% if e and e.duree is not None %}{{ e.duree }} j{% else %}—{% endif %}
+          </div></div>
+          <div class="col-md-3"><span class="text-muted">Gain</span><div class="fw-semibold">
+            {% if e and e.poids_engraissement is not None %}{{ e.poids_engraissement|floatformat:1 }} kg{% else %}—{% endif %}
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="d-flex justify-content-between">
+        {% if e %}
+          <a class="btn btn-outline-secondary" href="{% url 'embouche:embouche_detail' e.pk %}">Annuler</a>
+        {% else %}
+          <a class="btn btn-outline-secondary" href="{% url 'embouche:embouche_list' %}">Annuler</a>
+        {% endif %}
+        <button type="submit" class="btn btn-danger">
+          <i class="fa-solid fa-trash me-1"></i> Supprimer définitivement
+        </button>
+      </div>
+    </form>
+    {% endwith %}
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

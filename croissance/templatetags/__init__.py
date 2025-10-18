@@ -1,0 +1,1 @@
+# Nécessaire pour que Django détecte ce package de tags

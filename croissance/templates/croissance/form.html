@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  {% load static %}
+  {% load croissance_extras %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% if form.instance.pk %}Modifier{% else %}Ajouter{% endif %} — Croissance</title>
+
+  <!-- CDNs -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+  <!-- Layout commun + styles module -->
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+  <link rel="stylesheet" href="{% static 'troupeau/styles.css' %}">
+  <link rel="stylesheet" href="{% static 'croissance/styles.css' %}">
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <i class="fa-solid fa-seedling fa-lg"></i>
+      <h1>Ferme MV Pahou</h1>
+    </div>
+
+    <nav class="menu">
+      {% with name=request.resolver_match.url_name %}
+        <p class="title">Navigation</p>
+
+        <a class="nav-link" href="{% url 'accueil' %}">
+          <i class="fa-solid fa-house"></i> Accueil
+        </a>
+
+        <a class="nav-link{% if name in 'croissance_list croissance_detail croissance_update' %} active{% endif %}"
+           href="{% url 'croissance:croissance_list' %}">
+          <i class="fa-solid fa-chart-line"></i> Croissance (liste)
+        </a>
+
+        <a class="nav-link{% if name == 'croissance_create' %} active{% endif %}"
+           href="{% url 'croissance:croissance_create' %}">
+          <i class="fa-solid fa-plus"></i> Nouvelle mesure
+        </a>
+
+        <a class="nav-link{% if name == 'croissance_dashboard' %} active{% endif %}"
+           href="{% url 'croissance:croissance_dashboard' %}">
+          <i class="fa-solid fa-chart-bar"></i> Dashboard
+        </a>
+
+        <p class="title">Autres</p>
+        <a class="nav-link" href="{% url 'troupeau:liste' %}"><i class="fa-solid fa-paw"></i> Troupeau</a>
+        <a class="nav-link" href="{% url 'accouplement:liste' %}"><i class="fa-solid fa-heart"></i> Accouplements</a>
+        <a class="nav-link" href="{% url 'gestation:gestation_list' %}"><i class="fa-solid fa-baby-carriage"></i> Gestations</a>
+        <a class="nav-link" href="{% url 'naissance:naissance_list' %}"><i class="fa-solid fa-baby"></i> Naissances</a>
+      {% endwith %}
+    </nav>
+  </aside>
+
+  <!-- Contenu -->
+  <main class="content">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="h3 mb-0">
+        {% if form.instance.pk %}Modifier{% else %}Nouvelle{% endif %} mesure
+      </h1>
+      <div class="btn-toolbar gap-2">
+        <a href="{% url 'accueil' %}" class="btn btn-outline-secondary btn-sm">
+          <i class="fa-solid fa-house me-1"></i> Accueil
+        </a>
+        <a href="{% url 'croissance:croissance_list' %}" class="btn btn-outline-primary btn-sm">
+          ← Liste
+        </a>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger mb-3">
+          {% for err in form.non_field_errors %}{{ err }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="card">
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              {{ form.Boucle_Ovin.label_tag }}
+              {{ form.Boucle_Ovin }}
+              {% for e in form.Boucle_Ovin.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+            </div>
+
+            <div class="col-md-6">
+              {{ form.Date_mesure.label_tag }}
+              {{ form.Date_mesure }}
+              {% for e in form.Date_mesure.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+            </div>
+
+            <div class="col-md-6">
+              {{ form.Poids_Kg.label_tag }}
+              {{ form.Poids_Kg }}
+              {% for e in form.Poids_Kg.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+            </div>
+
+            <div class="col-md-6">
+              {{ form.Taille_CM.label_tag }}
+              {{ form.Taille_CM }}
+              {% for e in form.Taille_CM.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+            </div>
+
+            <div class="col-md-6">
+              {{ form.Etat_Sante.label_tag }}
+              {{ form.Etat_Sante }}
+              {% for e in form.Etat_Sante.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+            </div>
+
+            <div class="col-md-6">
+              {{ form.Croissance_Evaluation.label_tag }}
+              {{ form.Croissance_Evaluation }}
+              {% for e in form.Croissance_Evaluation.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+            </div>
+
+            <div class="col-12">
+              {{ form.Observations.label_tag }}
+              {{ form.Observations }}
+              {% for e in form.Observations.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-end gap-2">
+          <a href="{% url 'croissance:croissance_list' %}" class="btn btn-outline-secondary">Annuler</a>
+          <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-floppy-disk me-1"></i> Enregistrer
+          </button>
+        </div>
+      </div>
+    </form>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

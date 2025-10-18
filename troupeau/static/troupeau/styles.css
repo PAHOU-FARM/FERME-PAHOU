@@ -1,0 +1,220 @@
+/* styles.css (troupeau) — corrigé et harmonisé */
+
+/* ================= Vars ================= */
+:root {
+  --bg-page: #f9f9f9;
+  --text-main: #333;
+  --text-muted: #6c757d;
+
+  --primary: #007bff;
+  --primary-hover: #0056b3;
+
+  --success: #28a745;
+  --success-hover: #1e7e34;
+
+  --secondary: #6c757d;
+  --secondary-hover: #545b62;
+
+  --info-bg: #f8f9fa;
+  --table-border: #ddd;
+  --shadow: 0 2px 5px rgba(0,0,0,0.1);
+
+  --alert-success-bg: #d4edda;
+  --alert-success-text: #155724;
+  --alert-success-border: #c3e6cb;
+
+  --alert-error-bg: #f8d7da;
+  --alert-error-text: #721c24;
+  --alert-error-border: #f5c6cb;
+
+  --focus-ring: 0 0 0 3px rgba(0,123,255,0.25);
+}
+
+/* ============ Base ============ */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { line-height: 1.15; -webkit-text-size-adjust: 100%; }
+
+body {
+  /* pas de margin global pour ne pas casser la mise en page avec la sidebar */
+  background-color: var(--bg-page);
+  line-height: 1.6;
+  color: var(--text-main);
+  font-family: Arial, sans-serif;
+}
+
+h2, h3 {
+  color: var(--text-main);
+  margin-bottom: 15px;
+}
+
+/* ============ Formulaires ============ */
+form {
+  margin-bottom: 20px;
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+/* Labels générés via {{ field.label_tag }} (aucun for manuel dans le template) */
+.form-label label {
+  display: inline-block;
+  margin-bottom: .5rem;
+  font-weight: 600;
+}
+
+/* Champ de recherche simple (si utilisé hors Bootstrap) */
+.search-form input[type="text"]:not(.form-control) {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-right: 5px;
+  width: 250px;
+  transition: box-shadow .15s ease, border-color .15s ease;
+}
+.search-form input[type="text"]:not(.form-control):focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: var(--focus-ring);
+}
+
+.form-buttons { margin-top: 15px; }
+
+/* Boutons natifs (NE PAS toucher .btn Bootstrap) */
+button:not(.btn) {
+  padding: 10px 16px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color .15s ease, box-shadow .15s ease, transform .02s ease;
+}
+button:not(.btn):focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+button:not(.btn):active { transform: translateY(1px); }
+button[type="submit"]:not(.btn) { background-color: var(--primary); color: #fff; }
+button[type="submit"]:not(.btn):hover { background-color: var(--primary-hover); }
+button[type="reset"]:not(.btn) { background-color: var(--secondary); color: #fff; }
+button[type="reset"]:not(.btn):hover { background-color: var(--secondary-hover); }
+button[type="button"]:not(.btn) { background-color: var(--success); color: #fff; }
+button[type="button"]:not(.btn):hover { background-color: var(--success-hover); }
+
+/* ============ Messages d'alerte ============ */
+.messages { margin: 20px 0; }
+
+.alert {
+  padding: 12px;
+  margin: 5px 0;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  box-shadow: var(--shadow);
+}
+.alert-success {
+  background-color: var(--alert-success-bg);
+  color: var(--alert-success-text);
+  border-color: var(--alert-success-border);
+}
+.alert-error {
+  background-color: var(--alert-error-bg);
+  color: var(--alert-error-text);
+  border-color: var(--alert-error-border);
+}
+/* variantes optionnelles */
+.alert-info { background-color: #d1ecf1; color: #0c5460; border-color: #bee5eb; }
+.alert-warning { background-color: #fff3cd; color: #856404; border-color: #ffeeba; }
+
+/* ============ Tableaux ============ */
+.table-container {
+  background-color: #fff;
+  border-radius: 8px;
+  overflow-x: auto;
+  box-shadow: var(--shadow);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+  background-color: #fff;
+}
+
+th, td {
+  padding: 12px 10px;
+  text-align: left;
+  border: 1px solid var(--table-border);
+  vertical-align: middle;
+}
+
+th {
+  background-color: var(--info-bg);
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 2px solid #dee2e6;
+}
+
+tbody tr:nth-child(even) { background-color: #f8f9fa; }
+tbody tr:hover { background-color: rgba(13,110,253,0.05); }
+
+/* Si une ligne est .table-secondary (ex: animal inactif) */
+tr.table-secondary th,
+tr.table-secondary td { background-color: #f1f3f5 !important; }
+
+/* ============ État vide ============ */
+.no-results {
+  text-align: center;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+/* ============ Champs Django “par défaut” ============ */
+/* On n’écrase PAS Bootstrap : on cible uniquement les widgets non-Bootstrap */
+form input:not(.form-control),
+form select:not(.form-select),
+form textarea:not(.form-control) {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 320px;
+  font-size: 14px;
+  transition: box-shadow .15s ease, border-color .15s ease;
+}
+
+form input:not(.form-control):focus,
+form select:not(.form-select):focus,
+form textarea:not(.form-control):focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: var(--focus-ring);
+}
+
+/* ============ Accessibilité ============ */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============ Responsive ============ */
+@media (max-width: 768px) {
+  .search-form input[type="text"]:not(.form-control) {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  table { font-size: 12px; }
+  th, td { padding: 8px 6px; }
+}

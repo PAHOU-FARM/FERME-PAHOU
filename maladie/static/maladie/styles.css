@@ -1,0 +1,141 @@
+/* ==============================
+   Variables & couleurs
+============================== */
+:root {
+  --card-bg: #ffffff;
+  --card-border: #dee2e6;
+  --muted: #6c757d;
+  --heading: #343a40;
+  --accent: #0d6efd;
+  --error: #dc3545;
+  --soft-shadow: 0 6px 18px rgba(0, 0, 0, .06);
+}
+
+/* ==============================
+   Reset léger
+============================== */
+html, body {
+  scroll-behavior: smooth;
+  background-color: #f8f9fa;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, .h1, h2, .h2, h3, .h3 {
+  color: var(--heading);
+  letter-spacing: .2px;
+}
+
+/* ==============================
+   Boutons
+============================== */
+.btn {
+  border-radius: .5rem;
+  transition: transform .06s ease, box-shadow .12s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .08);
+}
+
+/* ==============================
+   Formulaires
+============================== */
+.form-label {
+  font-weight: 600;
+  color: var(--heading);
+}
+
+.form-control,
+.form-select,
+textarea {
+  border-radius: .5rem;
+}
+
+.form-control:focus,
+.form-select:focus,
+textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 .2rem rgba(13, 110, 253, .15);
+  outline: 0;
+}
+
+/* Messages d’erreur inline */
+.text-danger.small {
+  margin-top: .25rem;
+}
+
+/* ==============================
+   Cartes & sections
+============================== */
+.card {
+  border-radius: .5rem;
+  border: 1px solid var(--card-border);
+  background-color: var(--card-bg);
+  box-shadow: var(--soft-shadow);
+}
+
+.card-header {
+  font-weight: 600;
+}
+
+/* ==============================
+   Tableaux
+============================== */
+.table {
+  margin-bottom: 0;
+}
+
+.table thead th {
+  font-weight: 600;
+  color: var(--heading);
+  border-top: none;
+  white-space: nowrap;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(13, 110, 253, 0.05);
+}
+
+/* Colonne alignée à droite (utilitaire) */
+.text-end {
+  text-align: right !important;
+}
+
+/* ==============================
+   Badges (état & gravité)
+============================== */
+/* États */
+.badge-actif { background-color: #ffc107; color: #212529; }
+.badge-resolu { background-color: #198754; }
+.badge-chronique { background-color: #6c757d; }
+
+/* Gravité */
+.badge-leger { background-color: #e9ecef; color: #212529; }
+.badge-modere { background-color: #0dcaf0; color: #0b1e3c; }
+.badge-grave { background-color: #dc3545; }
+.badge-critique { background-color: #842029; }
+
+/* ==============================
+   Alerts
+============================== */
+.alert {
+  border-radius: .5rem;
+  box-shadow: var(--soft-shadow);
+}
+
+/* ==============================
+   Blocs clé/valeur (pages détail)
+============================== */
+dl.row dt {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+/* ==============================
+   Responsive
+============================== */
+@media (max-width: 768px) {
+  .btn-group { gap: .5rem; }
+}
