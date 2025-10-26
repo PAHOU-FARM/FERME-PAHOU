@@ -15,7 +15,6 @@
     :root{
       --input-h: 46px;         /* Hauteur unique des champs */
       --radius: .5rem;         /* Rayon commun des champs */
-      --gap-outside: 10px;     /* Espace entre le champ et l'icône œil */
     }
 
     body {
@@ -33,7 +32,7 @@
       box-shadow: 0 4px 20px rgba(0,0,0,.08);
       padding: 2.25rem;
       width: 100%;
-      max-width: 450px;
+      max-width: 420px;
     }
     .login-card h2 {
       text-align: center;
@@ -76,13 +75,13 @@
       width: 100%;
     }
 
-    /* L'icône "œil" : à droite, à l'extérieur, centrée verticalement */
+    /* L'icône "œil" collée directement au champ */
     .eye-plain {
       background: transparent;
       border: none;
       padding: 0;
       margin: 0;
-      margin-left: var(--gap-outside);
+      margin-left: 8px; /* Espacement réduit pour coller au champ */
       line-height: 1;
       cursor: pointer;
       width: 32px;
@@ -93,7 +92,10 @@
       flex-shrink: 0;
     }
     .eye-plain:focus { outline: none; }
-    .eye-plain i { font-size: 1rem; color: #6c757d; }
+    .eye-plain i {
+      font-size: 1.2rem;
+      color: #6c757d;
+    }
     .eye-plain:hover i { color: #495057; }
 
     /* Style des labels */
@@ -152,7 +154,7 @@
         {% endfor %}
       </div>
 
-      <!-- Mot de passe avec œil à l'extérieur -->
+      <!-- Mot de passe avec œil collé à côté -->
       <div class="mb-3 field-container">
         <label class="form-label">
           <i class="fa-solid fa-lock me-1"></i>Mot de passe
