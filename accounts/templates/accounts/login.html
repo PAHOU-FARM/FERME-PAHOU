@@ -12,6 +12,13 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
 
   <style>
+    :root{
+      --input-h: 44px;         /* Hauteur unique utilisée partout */
+      --gap-outside: 10px;     /* Espace entre l'input et le bouton œil */
+      --radius: .5rem;         /* Rayon commun */
+      --border: #ced4da;       /* Couleur de bordure */
+    }
+
     body {
       background: #f8f9fa;
       display: flex;
@@ -41,52 +48,59 @@
       font-size: .95rem;
     }
 
-    /* Inputs alignés et mêmes dimensions */
-    .login-card input[type="text"],
-    .login-card input[type="password"] {
+    /* Champs homogènes (même largeur/hauteur) */
+    .text-input {
       display: block;
       width: 100%;
-      border: 1px solid #ced4da;
-      border-radius: .5rem;
+      height: var(--input-h);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
       padding: .6rem .75rem;
-      height: 40px;            /* hauteur uniforme */
       line-height: 1.25rem;
     }
 
-    .btn { border-radius: .5rem; }
+    .btn { border-radius: var(--radius); }
 
-    /* Bouton œil à l’extérieur du champ, centré verticalement */
+    /* Bloc mot de passe avec bouton œil à l'extérieur, centré verticalement */
     .pwd-wrap {
       position: relative;
-      /* marge droite pour respirer si besoin (facultatif) */
-      margin-right: 56px; /* espace visuel entre l'input et le bouton externe sur petits écrans */
+      /* réserve visuelle pour éviter que le bouton externe ne semble "coller" à la carte */
+      margin-right: calc(var(--input-h) + var(--gap-outside));
     }
     .toggle-pwd-btn {
       position: absolute;
       top: 50%;
-      left: calc(100% + 8px);   /* 8px en dehors du bord droit du champ */
+      left: calc(100% + var(--gap-outside));
       transform: translateY(-50%);
-      width: 40px;
-      height: 40px;
-      border: 1px solid #ced4da;
-      border-radius: .5rem;
+      width: var(--input-h);
+      height: var(--input-h);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
       background: #fff;
       display: inline-flex;
-      align-items: center;
-      justify-content: center;
+      align-items: center;      /* centre verticalement l’icône */
+      justify-content: center;  /* centre horizontalement l’icône */
       padding: 0;
+      cursor: pointer;
+    }
+    .toggle-pwd-btn:focus{
+      outline: 2px solid rgba(25,135,84,.35);
+      outline-offset: 2px;
     }
 
-    /* Sur très petits écrans, évite le chevauchement (optionnel) */
+    /* Sécurité responsive : si l'espace manque, le bouton passe en dessous proprement */
     @media (max-width: 380px) {
-      .toggle-pwd-btn {
-        left: auto;
-        right: 0;
-        position: static;
-        margin-top: 8px;
-        margin-left: 0;
-      }
       .pwd-wrap { margin-right: 0; }
+      .toggle-pwd-btn {
+        position: static;
+        transform: none;
+        width: auto;
+        height: auto;
+        border: none;
+        background: transparent;
+        margin-top: 8px;
+        padding: 6px 10px;
+      }
     }
   </style>
 </head>
@@ -113,16 +127,23 @@
       <!-- Nom d'utilisateur -->
       <div class="mb-3">
         <label class="form-label">Nom d'utilisateur</label>
-        {{ form.username }}
+        {{ form.username|add_class_if_exists:"text-input" }}
+        {# fallback si vous n'avez pas le filtre custom :
+           remplacez la ligne ci-dessus par:
+           {{ form.username.as_widget|safe }}
+           et dans forms.py, le widget a déjà la classe 'form-control' —
+           ici on force une classe cohérente via CSS global #}
         {% for err in form.username.errors %}
           <div class="invalid-feedback d-block">{{ err }}</div>
         {% endfor %}
       </div>
 
-      <!-- Mot de passe (œil à l'extérieur, centré verticalement) -->
+      <!-- Mot de passe (œil externe, centré verticalement et même "taille visuelle") -->
       <div class="mb-3 pwd-wrap">
         <label class="form-label mb-1">Mot de passe</label>
-        {{ form.password }}
+        {{ form.password|add_class_if_exists:"text-input password-input" }}
+        {# fallback si pas de filtre custom :
+           {{ form.password.as_widget|safe }} #}
         <button class="toggle-pwd-btn" type="button" id="togglePwd" aria-label="Afficher/Masquer le mot de passe">
           <i class="fa-regular fa-eye"></i>
         </button>
