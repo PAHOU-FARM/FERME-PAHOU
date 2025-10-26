@@ -13,8 +13,8 @@
 
   <style>
     :root{
-      --input-h: 44px;         /* Hauteur unique utilisée partout */
-      --gap-outside: 10px;     /* Espace entre l'input et le bouton œil */
+      --input-h: 44px;         /* Hauteur unique des champs */
+      --gap-outside: 10px;     /* Espace entre l’input et le bouton œil */
       --radius: .5rem;         /* Rayon commun */
       --border: #ced4da;       /* Couleur de bordure */
     }
@@ -48,23 +48,19 @@
       font-size: .95rem;
     }
 
-    /* Champs homogènes (même largeur/hauteur) */
-    .text-input {
-      display: block;
-      width: 100%;
+    /* Uniformise la taille des champs rendus par Django */
+    .form-control {
       height: var(--input-h);
-      border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: .6rem .75rem;
-      line-height: 1.25rem;
     }
 
     .btn { border-radius: var(--radius); }
 
-    /* Bloc mot de passe avec bouton œil à l'extérieur, centré verticalement */
+    /* Bloc mot de passe avec bouton œil à l’extérieur, centré verticalement */
     .pwd-wrap {
       position: relative;
-      /* réserve visuelle pour éviter que le bouton externe ne semble "coller" à la carte */
+      /* réserve visuelle pour loger le bouton externe à droite */
       margin-right: calc(var(--input-h) + var(--gap-outside));
     }
     .toggle-pwd-btn {
@@ -88,7 +84,7 @@
       outline-offset: 2px;
     }
 
-    /* Sécurité responsive : si l'espace manque, le bouton passe en dessous proprement */
+    /* Sécurité responsive : si l'espace manque, le bouton passe sous l'input proprement */
     @media (max-width: 380px) {
       .pwd-wrap { margin-right: 0; }
       .toggle-pwd-btn {
@@ -126,24 +122,17 @@
 
       <!-- Nom d'utilisateur -->
       <div class="mb-3">
-        <label class="form-label">Nom d'utilisateur</label>
-        {{ form.username|add_class_if_exists:"text-input" }}
-        {# fallback si vous n'avez pas le filtre custom :
-           remplacez la ligne ci-dessus par:
-           {{ form.username.as_widget|safe }}
-           et dans forms.py, le widget a déjà la classe 'form-control' —
-           ici on force une classe cohérente via CSS global #}
+        {{ form.username.label_tag }}
+        {{ form.username }}
         {% for err in form.username.errors %}
           <div class="invalid-feedback d-block">{{ err }}</div>
         {% endfor %}
       </div>
 
-      <!-- Mot de passe (œil externe, centré verticalement et même "taille visuelle") -->
+      <!-- Mot de passe (œil externe, centré verticalement et même “taille visuelle”) -->
       <div class="mb-3 pwd-wrap">
-        <label class="form-label mb-1">Mot de passe</label>
-        {{ form.password|add_class_if_exists:"text-input password-input" }}
-        {# fallback si pas de filtre custom :
-           {{ form.password.as_widget|safe }} #}
+        {{ form.password.label_tag }}
+        {{ form.password }}
         <button class="toggle-pwd-btn" type="button" id="togglePwd" aria-label="Afficher/Masquer le mot de passe">
           <i class="fa-regular fa-eye"></i>
         </button>
@@ -167,6 +156,7 @@
   <script>
     (function () {
       var btn = document.getElementById('togglePwd');
+      // ID réel généré par Django pour le champ password
       var pwInputId = "{{ form.password.id_for_label|escapejs }}";
       var inp = document.getElementById(pwInputId);
       if (btn && inp) {
