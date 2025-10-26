@@ -33,7 +33,7 @@
       box-shadow: 0 4px 20px rgba(0,0,0,.08);
       padding: 2.25rem;
       width: 100%;
-      max-width: 420px;
+      max-width: 450px;
     }
     .login-card h2 {
       text-align: center;
@@ -52,27 +52,28 @@
       height: var(--input-h);
       border-radius: var(--radius);
       padding: .6rem .75rem;
-      width: 100%; /* Assure la pleine largeur */
+      width: 100%;
     }
 
     .btn { border-radius: var(--radius); }
 
-    /* Conteneur commun pour tous les champs */
+    /* Conteneur pour chaque champ */
     .field-container {
       position: relative;
       width: 100%;
     }
 
     /* Conteneur spécifique pour le mot de passe avec œil */
-    .pwd-container {
+    .pwd-field-container {
       display: flex;
       align-items: center;
       width: 100%;
     }
 
     /* Champ mot de passe dans le conteneur flex */
-    .pwd-field {
+    .pwd-input-wrapper {
       flex: 1;
+      width: 100%;
     }
 
     /* L'icône "œil" : à droite, à l'extérieur, centrée verticalement */
@@ -89,15 +90,23 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0; /* Empêche le rétrécissement */
+      flex-shrink: 0;
     }
     .eye-plain:focus { outline: none; }
     .eye-plain i { font-size: 1rem; color: #6c757d; }
     .eye-plain:hover i { color: #495057; }
 
-    /* Sécurité responsive (si très petit écran, on place l'icône sous le champ) */
+    /* Style des labels */
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #495057;
+    }
+
+    /* Sécurité responsive */
     @media (max-width: 380px) {
-      .pwd-container {
+      .pwd-field-container {
         flex-direction: column;
         align-items: stretch;
       }
@@ -105,6 +114,9 @@
         margin-left: 0;
         margin-top: 6px;
         align-self: flex-start;
+      }
+      .login-card {
+        padding: 1.5rem;
       }
     }
   </style>
@@ -131,7 +143,9 @@
 
       <!-- Nom d'utilisateur -->
       <div class="mb-3 field-container">
-        {{ form.username.label_tag }}
+        <label class="form-label">
+          <i class="fa-solid fa-user me-1"></i>Nom utilisateur
+        </label>
         {{ form.username }}
         {% for err in form.username.errors %}
           <div class="invalid-feedback d-block">{{ err }}</div>
@@ -140,9 +154,13 @@
 
       <!-- Mot de passe avec œil à l'extérieur -->
       <div class="mb-3 field-container">
-        {{ form.password.label_tag }}
-        <div class="pwd-container">
-          {{ form.password }}
+        <label class="form-label">
+          <i class="fa-solid fa-lock me-1"></i>Mot de passe
+        </label>
+        <div class="pwd-field-container">
+          <div class="pwd-input-wrapper">
+            {{ form.password }}
+          </div>
           <button type="button" class="eye-plain" id="togglePwd" aria-label="Afficher/Masquer le mot de passe">
             <i class="fa-regular fa-eye"></i>
           </button>
@@ -152,7 +170,7 @@
         {% endfor %}
       </div>
 
-      <button type="submit" class="btn btn-success w-100">
+      <button type="submit" class="btn btn-success w-100" style="height: var(--input-h);">
         <i class="fa-solid fa-right-to-bracket me-1"></i> Connexion
       </button>
     </form>
@@ -167,8 +185,10 @@
   <script>
     (function () {
       var btn = document.getElementById('togglePwd');
-      var pwInputId = "{{ form.password.id_for_label|escapejs }}";
-      var inp = document.getElementById(pwInputId);
+      // Trouver l'input password par son nom
+      var passwordInputs = document.querySelectorAll('input[type="password"]');
+      var inp = passwordInputs[0];
+
       if (btn && inp) {
         btn.addEventListener('click', function () {
           var isPwd = inp.type === 'password';
