@@ -15,7 +15,7 @@
     :root{
       --input-h: 46px;         /* Hauteur unique des champs */
       --radius: .5rem;         /* Rayon commun des champs */
-      --gap-outside: 10px;     /* Espace entre le champ et l’icône œil */
+      --gap-outside: 10px;     /* Espace entre le champ et l'icône œil */
     }
 
     body {
@@ -52,46 +52,59 @@
       height: var(--input-h);
       border-radius: var(--radius);
       padding: .6rem .75rem;
+      width: 100%; /* Assure la pleine largeur */
     }
 
     .btn { border-radius: var(--radius); }
 
-    /* Conteneur du champ mot de passe (pour positionner l'œil à l'extérieur) */
-    .pwd-row {
-      position: relative;       /* référentiel pour l’icône absolue */
+    /* Conteneur commun pour tous les champs */
+    .field-container {
+      position: relative;
+      width: 100%;
     }
-    /* L’icône “œil” : à droite, à l’extérieur, sans encadré, centrée verticalement */
+
+    /* Conteneur spécifique pour le mot de passe avec œil */
+    .pwd-container {
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    /* Champ mot de passe dans le conteneur flex */
+    .pwd-field {
+      flex: 1;
+    }
+
+    /* L'icône "œil" : à droite, à l'extérieur, centrée verticalement */
     .eye-plain {
-      position: absolute;
-      top: 50%;
-      left: calc(100% + var(--gap-outside)); /* à l’extérieur, côté droit */
-      transform: translateY(-50%);
-      background: transparent;  /* pas d’encadré */
-      border: none;             /* pas de bordure */
+      background: transparent;
+      border: none;
       padding: 0;
       margin: 0;
+      margin-left: var(--gap-outside);
       line-height: 1;
       cursor: pointer;
-
-      /* Zone cliquable confortable, mais invisible */
       width: 32px;
       height: 32px;
       display: inline-flex;
-      align-items: center;      /* centre verticalement l’icône dans sa zone cliquable */
-      justify-content: center;  /* centre horizontalement l’icône */
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0; /* Empêche le rétrécissement */
     }
     .eye-plain:focus { outline: none; }
     .eye-plain i { font-size: 1rem; color: #6c757d; }
     .eye-plain:hover i { color: #495057; }
 
-    /* Sécurité responsive (si très petit écran, on place l’icône sous le champ) */
+    /* Sécurité responsive (si très petit écran, on place l'icône sous le champ) */
     @media (max-width: 380px) {
+      .pwd-container {
+        flex-direction: column;
+        align-items: stretch;
+      }
       .eye-plain {
-        position: static;
-        transform: none;
-        width: auto;
-        height: auto;
+        margin-left: 0;
         margin-top: 6px;
+        align-self: flex-start;
       }
     }
   </style>
@@ -116,8 +129,8 @@
       {% csrf_token %}
       {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
 
-      <!-- Nom d'utilisateur (masque identique) -->
-      <div class="mb-3">
+      <!-- Nom d'utilisateur -->
+      <div class="mb-3 field-container">
         {{ form.username.label_tag }}
         {{ form.username }}
         {% for err in form.username.errors %}
@@ -125,13 +138,15 @@
         {% endfor %}
       </div>
 
-      <!-- Mot de passe (même masque) + œil à l’extérieur, centré verticalement -->
-      <div class="mb-3 pwd-row">
+      <!-- Mot de passe avec œil à l'extérieur -->
+      <div class="mb-3 field-container">
         {{ form.password.label_tag }}
-        {{ form.password }}
-        <button type="button" class="eye-plain" id="togglePwd" aria-label="Afficher/Masquer le mot de passe">
-          <i class="fa-regular fa-eye"></i>
-        </button>
+        <div class="pwd-container">
+          {{ form.password }}
+          <button type="button" class="eye-plain" id="togglePwd" aria-label="Afficher/Masquer le mot de passe">
+            <i class="fa-regular fa-eye"></i>
+          </button>
+        </div>
         {% for err in form.password.errors %}
           <div class="invalid-feedback d-block">{{ err }}</div>
         {% endfor %}
