@@ -62,11 +62,12 @@
       width: 100%;
     }
 
-    /* Conteneur spécifique pour le mot de passe avec œil */
+    /* Conteneur spécifique pour le mot de passe avec œil COLLÉ */
     .pwd-field-container {
       display: flex;
       align-items: center;
       width: 100%;
+      gap: 0; /* Supprime tout espace entre les éléments */
     }
 
     /* Champ mot de passe dans le conteneur flex */
@@ -75,13 +76,13 @@
       width: 100%;
     }
 
-    /* L'icône "œil" collée directement au champ */
+    /* L'icône "œil" COLLÉE directement au champ */
     .eye-plain {
       background: transparent;
       border: none;
       padding: 0;
       margin: 0;
-      margin-left: 8px; /* Espacement réduit pour coller au champ */
+      margin-left: 0; /* AUCUN espacement */
       line-height: 1;
       cursor: pointer;
       width: 32px;
@@ -104,6 +105,11 @@
       margin-bottom: 0.5rem;
       font-weight: 500;
       color: #495057;
+    }
+
+    /* Ajustement pour que le champ username ait la même apparence */
+    #id_username {
+      width: 100%;
     }
 
     /* Sécurité responsive */
@@ -148,20 +154,20 @@
         <label class="form-label">
           <i class="fa-solid fa-user me-1"></i>Nom utilisateur
         </label>
-        {{ form.username }}
+        <input type="text" name="username" class="form-control" id="id_username" required>
         {% for err in form.username.errors %}
           <div class="invalid-feedback d-block">{{ err }}</div>
         {% endfor %}
       </div>
 
-      <!-- Mot de passe avec œil collé à côté -->
+      <!-- Mot de passe avec œil COLLÉ à côté -->
       <div class="mb-3 field-container">
         <label class="form-label">
           <i class="fa-solid fa-lock me-1"></i>Mot de passe
         </label>
         <div class="pwd-field-container">
           <div class="pwd-input-wrapper">
-            {{ form.password }}
+            <input type="password" name="password" class="form-control" id="id_password" required>
           </div>
           <button type="button" class="eye-plain" id="togglePwd" aria-label="Afficher/Masquer le mot de passe">
             <i class="fa-regular fa-eye"></i>
@@ -187,9 +193,7 @@
   <script>
     (function () {
       var btn = document.getElementById('togglePwd');
-      // Trouver l'input password par son nom
-      var passwordInputs = document.querySelectorAll('input[type="password"]');
-      var inp = passwordInputs[0];
+      var inp = document.getElementById('id_password');
 
       if (btn && inp) {
         btn.addEventListener('click', function () {
