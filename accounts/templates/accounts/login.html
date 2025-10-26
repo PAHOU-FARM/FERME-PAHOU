@@ -13,10 +13,9 @@
 
   <style>
     :root{
-      --input-h: 44px;         /* Hauteur unique des champs */
-      --gap-outside: 10px;     /* Espace entre l’input et le bouton œil */
-      --radius: .5rem;         /* Rayon commun */
-      --border: #ced4da;       /* Couleur de bordure */
+      --input-h: 46px;         /* Hauteur unique des champs */
+      --radius: .5rem;         /* Rayon commun des champs */
+      --gap-outside: 10px;     /* Espace entre le champ et l’icône œil */
     }
 
     body {
@@ -48,7 +47,7 @@
       font-size: .95rem;
     }
 
-    /* Uniformise la taille des champs rendus par Django */
+    /* Uniformise strictement les champs (même taille) */
     .form-control {
       height: var(--input-h);
       border-radius: var(--radius);
@@ -57,45 +56,42 @@
 
     .btn { border-radius: var(--radius); }
 
-    /* Bloc mot de passe avec bouton œil à l’extérieur, centré verticalement */
-    .pwd-wrap {
-      position: relative;
-      /* réserve visuelle pour loger le bouton externe à droite */
-      margin-right: calc(var(--input-h) + var(--gap-outside));
+    /* Conteneur du champ mot de passe (pour positionner l'œil à l'extérieur) */
+    .pwd-row {
+      position: relative;       /* référentiel pour l’icône absolue */
     }
-    .toggle-pwd-btn {
+    /* L’icône “œil” : à droite, à l’extérieur, sans encadré, centrée verticalement */
+    .eye-plain {
       position: absolute;
       top: 50%;
-      left: calc(100% + var(--gap-outside));
+      left: calc(100% + var(--gap-outside)); /* à l’extérieur, côté droit */
       transform: translateY(-50%);
-      width: var(--input-h);
-      height: var(--input-h);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: #fff;
-      display: inline-flex;
-      align-items: center;      /* centre verticalement l’icône */
-      justify-content: center;  /* centre horizontalement l’icône */
+      background: transparent;  /* pas d’encadré */
+      border: none;             /* pas de bordure */
       padding: 0;
+      margin: 0;
+      line-height: 1;
       cursor: pointer;
-    }
-    .toggle-pwd-btn:focus{
-      outline: 2px solid rgba(25,135,84,.35);
-      outline-offset: 2px;
-    }
 
-    /* Sécurité responsive : si l'espace manque, le bouton passe sous l'input proprement */
+      /* Zone cliquable confortable, mais invisible */
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;      /* centre verticalement l’icône dans sa zone cliquable */
+      justify-content: center;  /* centre horizontalement l’icône */
+    }
+    .eye-plain:focus { outline: none; }
+    .eye-plain i { font-size: 1rem; color: #6c757d; }
+    .eye-plain:hover i { color: #495057; }
+
+    /* Sécurité responsive (si très petit écran, on place l’icône sous le champ) */
     @media (max-width: 380px) {
-      .pwd-wrap { margin-right: 0; }
-      .toggle-pwd-btn {
+      .eye-plain {
         position: static;
         transform: none;
         width: auto;
         height: auto;
-        border: none;
-        background: transparent;
-        margin-top: 8px;
-        padding: 6px 10px;
+        margin-top: 6px;
       }
     }
   </style>
@@ -120,7 +116,7 @@
       {% csrf_token %}
       {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
 
-      <!-- Nom d'utilisateur -->
+      <!-- Nom d'utilisateur (masque identique) -->
       <div class="mb-3">
         {{ form.username.label_tag }}
         {{ form.username }}
@@ -129,11 +125,11 @@
         {% endfor %}
       </div>
 
-      <!-- Mot de passe (œil externe, centré verticalement et même “taille visuelle”) -->
-      <div class="mb-3 pwd-wrap">
+      <!-- Mot de passe (même masque) + œil à l’extérieur, centré verticalement -->
+      <div class="mb-3 pwd-row">
         {{ form.password.label_tag }}
         {{ form.password }}
-        <button class="toggle-pwd-btn" type="button" id="togglePwd" aria-label="Afficher/Masquer le mot de passe">
+        <button type="button" class="eye-plain" id="togglePwd" aria-label="Afficher/Masquer le mot de passe">
           <i class="fa-regular fa-eye"></i>
         </button>
         {% for err in form.password.errors %}
@@ -156,7 +152,6 @@
   <script>
     (function () {
       var btn = document.getElementById('togglePwd');
-      // ID réel généré par Django pour le champ password
       var pwInputId = "{{ form.password.id_for_label|escapejs }}";
       var inp = document.getElementById(pwInputId);
       if (btn && inp) {
