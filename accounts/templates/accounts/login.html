@@ -12,41 +12,82 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
 
   <style>
-    body{
-      background:#f8f9fa;min-height:100vh;margin:0;
-      display:flex;align-items:center;justify-content:center;padding:16px;
+    body {
+      background: #f8f9fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 16px;
     }
-    .login-card{
-      background:#fff;border-radius:1rem;box-shadow:0 4px 20px rgba(0,0,0,.08);
-      width:100%;max-width:420px;padding:2.25rem;
+    .login-card {
+      background: #fff;
+      border-radius: 1rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,.08);
+      padding: 2.25rem;
+      width: 100%;
+      max-width: 420px;
     }
-    .login-card h2{ text-align:center;font-weight:600;margin-bottom:.25rem; }
-    .brand-sub{ text-align:center;color:#6c757d;margin-bottom:1.25rem;font-size:.95rem; }
+    .login-card h2 {
+      text-align: center;
+      font-weight: 600;
+      margin-bottom: .25rem;
+    }
+    .brand-sub {
+      text-align: center;
+      color: #6c757d;
+      margin-bottom: 1.25rem;
+      font-size: .95rem;
+    }
 
-    /* Même dimension pour les 2 champs */
-    .field { margin-bottom: 1rem; }
-    .field label { display:block;margin-bottom:.45rem;font-weight:500; }
-    input[name="username"],
-    input[name="password"]{
-      display:block;width:100%;
-      height:44px; /* hauteur fixe commune */
-      padding:.6rem .75rem;
-      border:1px solid #ced4da;border-radius:.5rem;
-      font-size:1rem;background-color:#fff;
+    /* Inputs alignés et mêmes dimensions */
+    .login-card input[type="text"],
+    .login-card input[type="password"] {
+      display: block;
+      width: 100%;
+      border: 1px solid #ced4da;
+      border-radius: .5rem;
+      padding: .6rem .75rem;
+      height: 40px;            /* hauteur uniforme */
+      line-height: 1.25rem;
     }
 
-    /* Conteneur du mot de passe + bouton œil parfaitement centré à DROITE */
-    .pw-wrap{ position:relative; }
-    .pw-wrap .toggle{
-      position:absolute; top:0; bottom:0; right:.55rem; /* centre vertical via top+bottom */
-      display:flex; align-items:center; justify-content:center;
-      border:0; background:transparent; padding:0; cursor:pointer; line-height:1;
-      width:28px; /* zone cliquable confortable */
-    }
-    /* espace à droite pour l’icône */
-    .pw-wrap input[name="password"]{ padding-right:2.4rem; }
+    .btn { border-radius: .5rem; }
 
-    .btn { border-radius:.5rem; }
+    /* Bouton œil à l’extérieur du champ, centré verticalement */
+    .pwd-wrap {
+      position: relative;
+      /* marge droite pour respirer si besoin (facultatif) */
+      margin-right: 56px; /* espace visuel entre l'input et le bouton externe sur petits écrans */
+    }
+    .toggle-pwd-btn {
+      position: absolute;
+      top: 50%;
+      left: calc(100% + 8px);   /* 8px en dehors du bord droit du champ */
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      border: 1px solid #ced4da;
+      border-radius: .5rem;
+      background: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+    /* Sur très petits écrans, évite le chevauchement (optionnel) */
+    @media (max-width: 380px) {
+      .toggle-pwd-btn {
+        left: auto;
+        right: 0;
+        position: static;
+        margin-top: 8px;
+        margin-left: 0;
+      }
+      .pwd-wrap { margin-right: 0; }
+    }
   </style>
 </head>
 
@@ -70,19 +111,19 @@
       {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
 
       <!-- Nom d'utilisateur -->
-      <div class="field">
-        <label>Nom d'utilisateur</label>
+      <div class="mb-3">
+        <label class="form-label">Nom d'utilisateur</label>
         {{ form.username }}
         {% for err in form.username.errors %}
           <div class="invalid-feedback d-block">{{ err }}</div>
         {% endfor %}
       </div>
 
-      <!-- Mot de passe (œil centré verticalement à droite) -->
-      <div class="field pw-wrap">
-        <label>Mot de passe</label>
+      <!-- Mot de passe (œil à l'extérieur, centré verticalement) -->
+      <div class="mb-3 pwd-wrap">
+        <label class="form-label mb-1">Mot de passe</label>
         {{ form.password }}
-        <button class="toggle" type="button" id="togglePwd" aria-label="Afficher/Masquer le mot de passe">
+        <button class="toggle-pwd-btn" type="button" id="togglePwd" aria-label="Afficher/Masquer le mot de passe">
           <i class="fa-regular fa-eye"></i>
         </button>
         {% for err in form.password.errors %}
@@ -105,7 +146,8 @@
   <script>
     (function () {
       var btn = document.getElementById('togglePwd');
-      var inp = document.querySelector('input[name="password"]');
+      var pwInputId = "{{ form.password.id_for_label|escapejs }}";
+      var inp = document.getElementById(pwInputId);
       if (btn && inp) {
         btn.addEventListener('click', function () {
           var isPwd = inp.type === 'password';
