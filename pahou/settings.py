@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 from django.urls import reverse_lazy
+import dj_database_url  # ← pour PostgreSQL Render
 
 # === Chemins de base ===
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,7 +25,6 @@ ADMIN_RESET_CODE = os.environ.get("ADMIN_RESET_CODE", "CHANGE-MOI-EN-PROD")
 
 # === Applications ===
 INSTALLED_APPS = [
-    # Django apps
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -32,10 +32,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # Auth personnalisée
     "accounts",
-
-    # Apps métier
     "troupeau.apps.TroupeauConfig",
     "historiquetroupeau.apps.HistoriquetroupeauConfig",
     "accouplement.apps.AccouplementConfig",
@@ -55,6 +52,7 @@ INSTALLED_APPS = [
 # === Middleware ===
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -89,10 +87,9 @@ WSGI_APPLICATION = "pahou.wsgi.application"
 
 # === Base de données ===
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    "default": dj_database_url.config(
+        default=os.environ.get("DATABASE_URL", f"sqlite:///{BASE_DIR / 'db.sqlite3'}")
+    )
 }
 
 # === Validation des mots de passe ===
@@ -123,6 +120,9 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+# === WhiteNoise pour Render ===
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # === Emails ===
@@ -142,9 +142,9 @@ else:
     DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "no-reply@ferme-mv-pahou.com")
 
 # === Sessions ===
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True       # expire quand le navigateur se ferme
-SESSION_COOKIE_AGE = 60 * 60 * 2             # 2 heures
-SESSION_SAVE_EVERY_REQUEST = True            # prolonge la session à chaque action
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 60 * 60 * 2
+SESSION_SAVE_EVERY_REQUEST = True
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = "Lax"
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
